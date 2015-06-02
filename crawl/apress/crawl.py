@@ -1,5 +1,6 @@
 #python 2.7.10
 #usage: python crawl.py <category>, e.x. python crawl.py microsoft
+
 import httplib;
 import subprocess;
 import json;

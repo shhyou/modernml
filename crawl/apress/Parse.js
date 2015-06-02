@@ -1,6 +1,5 @@
 /* Node.js */
 var Parse = require('parse').Parse;
-
 var appId = "vQMTQvjGqlWYawkVGme21jeL7FQ3VEEeetu2Cg6R";
 var jsKey = "n9QwHXBE6D1AOcSufvG370uWDgNJOvFScNEVH87w";
 
