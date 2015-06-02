@@ -1,0 +1,35 @@
+@charset "UTF-8";
+/* line 4, ../sass/main.scss */
+* {
+  margin: 0;
+  padding: 0;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+/* line 10, ../sass/main.scss */
+html, body {
+  height: 100%;
+  font: 14px "Helvetica Neue",Helvetica,Arial,"Lucida Grande",sans-serif,"微軟正黑體";
+}
+
+/* line 15, ../sass/main.scss */
+div.container {
+  background-color: #FAFAFA;
+  padding: 20px;
+  border: 1px solid #dfdfdf;
+}
+
+/* line 21, ../sass/main.scss */
+div.loading_container {
+  width: 64px;
+  margin: 20px auto 0px auto;
+  display: none;
+}
+
+/* line 27, ../sass/main.scss */
+img#loading {
+  height: 64px;
+  width: 64px;
+}
