@@ -29,14 +29,14 @@ class mit_parse:
     def parse_course(self):
         f = open(self.filename + self.dept_file)
         for dept_url in f:
+            print 'parse ',dept_url.strip()
             urls = self.parse_dept_courses_url(dept_url.strip())
             f_out = open(self.course_file + dept_url.strip().replace('/','_'), 'w')
             for url in urls:
                 f_out.write(url+'\n')
             f_out.close()
         f.close()
-
-hi = mit_parse('mit_')
-#hi.parse_dept()
-#hi.parse_dept_courses_url('/courses/mathematics')
-hi.parse_course()
+if __name__ == '__main__':
+    hi = mit_parse('mit_')
+    hi.parse_dept()
+    hi.parse_course()
