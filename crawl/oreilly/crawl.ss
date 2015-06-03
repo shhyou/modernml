@@ -10,20 +10,26 @@
 
 (define *file/category* "category.json")
 
+;; GET request to `shop.oreilly.com` (with proper delay)
+;; string -> sxml
+(define (get-oreilly uri)
+  (let-values ([(response header content)
+                (http-get *url/oreilly* uri)])
+    (cond [(string=? response "200")
+           (sys-sleep 31)                      ; sleep 31s
+           (html->sxml content)]
+          [(string=? response "404")
+           response]
+          [else
+           (error (format #f "Getting url '~a' but got response '~a'"
+                          uri response))])))
+
+(define (update-index cats category)
+  (let* ([url (assoc category cats)]
+         [idx0 (get-oreilly url)])
+    'TODO))
 
 (define (update-category)
-  ;; retrieve category list from oreilly
-  (define (get-html)
-    (let-values ([(response header content)
-                  (http-get *url/oreilly* *uri/category*)])
-      (when (not (equal? response "200"))
-        (error (format #f "Getting url '~a' but got response '~a'" )))
-      content))
-
-  ;; select category hrefs (with some other urls)
-  (define (select-categories html)
-    ((sxpath '(// ul li a ^ href))(html->sxml html)))
-
   ;; remove top-level categories such as
   ;;   "http://shop.oreilly.com/category/browse-subjects.do"
   ;;   "http://shop.oreilly.com/category/browse-subjects/programming.do"
@@ -39,14 +45,20 @@
     (lambda (port)
       (let* ([html (begin
                      (format #t "Retrieving HTML...\n")
-                     (get-html))]
+                     (get-oreilly *uri/category*))]
              [urls (begin
-                     (format #t "Parsing URL...\n")
+                     (format #t "Extracting URLs...\n")
                      ($ remove-top-lists $
                         filter (^s (string-contains s "browse-subjects")) $
                         map sxml:string-value $
-                        select-categories html))])
-        (construct-json (list->vector urls) port)))))
+                        (sxpath '(// ul li a ^ href)) html))]
+             [cats (map (^s (cons (substring
+                                   s
+                                   (string-length "http://shop.oreilly.com/category/browse-subjects/")
+                                   (- (string-length s) 3))
+                                  s))
+                        urls)])
+        (construct-json cats port)))))
 
 (define (main args)
   (format #t "args: ~a\n" args)
