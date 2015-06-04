@@ -1,9 +1,13 @@
 (use srfi-13) ; string library
 (use srfi-11     :only (let-values))
+(use scheme.time :only (current-second))
 (use rfc.http    :only (http-get http-post))
 (use rfc.json    :only (parse-json construct-json))
 (use sxml.sxpath :only (sxpath car-sxpath node-pos sxml:string-value))
 (require "./htmlprag") ; html->sxml
+
+; delay between GET requests (in seconds)
+(define *get-delay* 0)
 
 (define *url/oreilly* "shop.oreilly.com")
 (define *uri/category* "/category/browse-subjects.do")
@@ -12,20 +16,31 @@
 
 ;; GET request to `shop.oreilly.com` (with proper delay)
 ;; string -> sxml
-(define (get-oreilly uri)
-  (let-values ([(response header content)
-                (http-get *url/oreilly* uri)])
-    (cond [(string=? response "200")
-           (sys-sleep 31)                      ; sleep 31s
-           (html->sxml content)]
-          [(string=? response "404")
-           response]
-          [else
-           (error (format #f "Getting url '~a' but got response '~a'"
-                          uri response))])))
+(define get-oreilly
+  (let ([t 0])
+    (lambda (uri)
+      (let [(t^ (- (current-second) t))]
+        (when (<= t^ *get-delay*)
+          (sys-sleep (- (+ *get-delay* 1) t^))))
+      (let-values ([(response header content)
+                    (http-get *url/oreilly* uri)])
+        (set! t (current-second))
+        (cond [(string=? response "200")
+               (html->sxml content)]
+              [(member response '("400" "401" "403" "404"))
+               response]
+              [else
+               (error (format #f "Getting url '~a' but got response '~a'"
+                              uri response))])))))
 
 (define (update-index cats category)
-  (let* ([url (assoc category cats)]
+  (define (select-books html)
+    ((sxpath '(// table tr td (() (^ class (equal? "thumbtext"))) div div a)) html))
+  (define (book->uri book)
+    (sxml:string-value ((car-sxpath '(^ href)) book)))
+  (define (book->name book)
+    ((node-pos 2) (sxml:child-nodes book)))
+  (let* ([url (cdr (assoc category cats))]
          [idx0 (get-oreilly url)])
     'TODO))
 
@@ -40,7 +55,7 @@
                       (^[s1 s2] (or (string-prefix? s1 s2)
                                     (string-prefix? s2 s1))))))
      xs))
-  
+
   (call-with-output-file *file/category*
     (lambda (port)
       (let* ([html (begin
@@ -61,5 +76,4 @@
         (construct-json cats port)))))
 
 (define (main args)
-  (format #t "args: ~a\n" args)
-  (update-category))
+  (format #t "args: ~a\n" args))
