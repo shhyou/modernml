@@ -39,8 +39,10 @@
 ; category list -> category -> (forall a. [a] -> [a]) -> ()
 ;                            probably selects a sublist
 (define (get-books cats cat sublist)
-  (make-directory* str*dir/html*)
-  (let* ([booksinfo (call-with-input-file (cdr (assoc "file" (cdr (assoc cat cats)))) parse-json)]
+  (make-directory* *dir/html*)
+  (let* ([booksinfo (vector->list
+                     (call-with-input-file
+                         (cdr (assoc "file" (cdr (assoc cat cats)))) parse-json))]
          [bookidx (sublist (iota (length booksinfo)))]
          [books (sublist booksinfo)])
     (format #t "Getting books ~a [~a,~a]" cat (car bookidx) (last bookidx)) (flush)
@@ -48,10 +50,8 @@
      (lambda (book)
        (display ".") (flush)
        (call-with-output-file (string-append *dir/html* "/" (cdr (assoc "file" book)))
-         (lambda (out-port)
-           (call-with-input-string
-            (get-oreilly (cdr (assoc "local_href" book)))
-            (lambda (in-port) (copy-port in-port out-port))))))
+         (lambda (port)
+           (write (get-oreilly (cdr (assoc "local_href" book))) port))))
      books)
     (newline)))
 
@@ -62,13 +62,6 @@
        (string-join (string-split cat "/") ",")
        "-"
        (string-join (string-split title delim) "-")))))
-
-(define (fix-book-format cat book)
-  (let ([local_href (cdr (assoc "local_href" book))]
-        [title (cdr (assoc "title" book))])
-    `((title . ,title)
-      (local_href . ,local_href)
-      (file . ,(booktitle->filename cat title)))))
 
 ; category list -> category -> ()
 (define (update-index cats cat)
@@ -156,12 +149,7 @@
   (define catlst (map car cats))
   (for-each
    (lambda (cat)
-     (format #t "Fixing ~a\n" cat)
-     (let* ([catinfo (cdr (assoc cat cats))]
-            [file (cdr (assoc "file" catinfo))]
-            [booksinfo (call-with-input-file file parse-json)])
-       (call-with-output-file file
-         (lambda (port) (construct-json (vector-map (^b (fix-book-format cat b)) booksinfo) port)))))
+     (get-books cats cat (lambda (xs) xs)))
    catlst))
 
 '(
