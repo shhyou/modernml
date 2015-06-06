@@ -56,16 +56,19 @@
     (newline)))
 
 (define booktitle->filename
-  (let ([delim #[\`\~!@$%^&*()+=\"\':\;<>/?\\{}| \t\r\n]])
-    (lambda (title)
-      (string-join (string-split title delim) "-"))))
+  (let ([delim #[\`\~!@$%^&*,()+=\"\':\;<>/?\\{}| \t\r\n]])
+    (lambda (cat title)
+      (string-append
+       (string-join (string-split cat "/") ",")
+       "-"
+       (string-join (string-split title delim) "-")))))
 
-(define (fix-book-format book)
+(define (fix-book-format cat book)
   (let ([local_href (cdr (assoc "local_href" book))]
         [title (cdr (assoc "title" book))])
     `((title . ,title)
       (local_href . ,local_href)
-      (file . ,(booktitle->filename title)))))
+      (file . ,(booktitle->filename cat title)))))
 
 ; category list -> category -> ()
 (define (update-index cats cat)
@@ -92,7 +95,7 @@
       (let ([title (car ((node-pos 2) (sxml:child-nodes book)))]))
       `((title . ,title)
         (local_href . ,(sxml:string-value ((car-sxpath '(^ href)) book)))
-        (file . ,(booktitle->filename title))))
+        (file . ,(booktitle->filename cat title))))
     (let* ([url (cdr (assoc "href" (cdr (assoc cat cats))))]
            [idx0 (begin
                    (format #t "Retrieving the first page of '~a'..." cat)
@@ -158,7 +161,7 @@
             [file (cdr (assoc "file" catinfo))]
             [booksinfo (call-with-input-file file parse-json)])
        (call-with-output-file file
-         (lmabda (port) (construct-json fix-book-format (vector-map booksinfo) port)))))
+         (lambda (port) (construct-json (vector-map (^b (fix-book-format cat b)) booksinfo) port)))))
    catlst))
 
 '(
