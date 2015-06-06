@@ -56,9 +56,16 @@
     (newline)))
 
 (define booktitle->filename
-  (let ([delim #[`~!@#$%^&*()_+=\"\':\;<>/?\\\[\]{}|]])
+  (let ([delim #[\`\~!@$%^&*()+=\"\':\;<>/?\\{}| \t\r\n]])
     (lambda (title)
       (string-join (string-split title delim) "-"))))
+
+(define (fix-book-format book)
+  (let ([local_href (cdr (assoc "local_href" book))]
+        [title (cdr (assoc "title" book))])
+    `((title . ,title)
+      (local_href . ,local_href)
+      (file . ,(booktitle->filename title)))))
 
 ; category list -> category -> ()
 (define (update-index cats cat)
@@ -144,9 +151,15 @@
   (define cats
     (call-with-input-file (string-append *file/category* ".json") parse-json))
   (define catlst (map car cats))
-  (define catlst0 (take (drop catlst 20) 80))
-  (format #t "Building index [20,100)\n")
-  (for-each (lambda (cat) (update-index cats cat)) catlst0))
+  (for-each
+   (lambda (cat)
+     (format #t "Fixing ~a\n" cat)
+     (let* ([catinfo (cdr (assoc cat cats))]
+            [file (cdr (assoc "file" catinfo))]
+            [booksinfo (call-with-input-file file parse-json)])
+       (call-with-output-file file
+         (lmabda (port) (construct-json fix-book-format (vector-map booksinfo) port)))))
+   catlst))
 
 '(
   "example usage"
