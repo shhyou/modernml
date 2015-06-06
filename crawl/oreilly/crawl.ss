@@ -5,6 +5,7 @@
 (use rfc.json    :only (parse-json construct-json))
 (use sxml.sxpath :only (sxpath car-sxpath node-pos sxml:string-value sxml:child-nodes))
 (require "./htmlprag") ; html->sxml
+(use file.util   :only (make-directory*))
 
 ; delay between GET requests (in seconds)
 (define *get-delay* 20)
@@ -13,7 +14,8 @@
 (define *uri/category* "/category/browse-subjects.do")
 
 (define *file/category* "category")
-(define *file/list* '"list-")
+(define *file/list* "list-")
+(define *dir/html* "./html")
 
 ;; GET request to `shop.oreilly.com` (with proper delay)
 ;; string -> sxml
@@ -34,6 +36,25 @@
                (error (format #f "Getting url '~a' but got response '~a'"
                               uri response))])))))
 
+; category list -> category -> (forall a. [a] -> [a]) -> ()
+;                            probably selects a sublist
+(define (get-books cats cat sublist)
+  (make-directory* str*dir/html*)
+  (let* ([booksinfo (call-with-input-file (cdr (assoc "file" (cdr (assoc cat cats)))) parse-json)]
+         [bookidx (sublist (iota (length booksinfo)))]
+         [books (sublist booksinfo)])
+    (format #t "Getting books ~a [~a,~a]" cat (car bookidx) (last bookidx)) (flush)
+    (for-each
+     (lambda (book)
+       (display ".") (flush)
+       (call-with-output-file (string-append *dir/html* "/" (cdr (assoc "file" book)))
+         (lambda (out-port)
+           (call-with-input-string
+            (get-oreilly (cdr (assoc "local_href" book)))
+            (lambda (in-port) (copy-port in-port out-port))))))
+     books)
+    (newline)))
+
 ; category list -> category -> ()
 (define (update-index cats cat)
   (define select-pages
@@ -47,12 +68,11 @@
         (cond [(null? hrefs)
                (list idx0)]
               [else (display "Retrieving pages") (flush)
-                    (let ([pages
-                           (map (lambda (href)
-                                  (display ".") (flush)
-                                  (get-oreilly href))
-                                hrefs)])
-                      (format #t "\n")
+                    (let ([pages (map (lambda (href)
+                                        (display ".") (flush)
+                                        (get-oreilly href))
+                                      hrefs)])
+                      (newline)
                       pages)])))
     (define select-books
       (sxpath '(// table tr ((td) (^ class (equal? "thumbtext"))) div div a)))
@@ -118,7 +138,7 @@
     (call-with-input-file (string-append *file/category* ".json") parse-json))
   (define catlst (map car cats))
   (define catlst0 (take (drop catlst 20) 80))
-  (format #t "Building index [20,80)\n")
+  (format #t "Building index [20,100)\n")
   (for-each (lambda (cat) (update-index cats cat)) catlst0))
 
 '(
