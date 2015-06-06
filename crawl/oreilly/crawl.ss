@@ -116,10 +116,12 @@
 '(
   "example usage"
 
-  (define cats         ;; create category list
-    (update-category))
-  (define cats         ;; use this if category list already exists
-    (call-with-input-file (string-append *file/category* ".json") read))
+  ;; create category list
+  (define cats (update-category))
+
+  ;; use this if category list already exists
+  (define cats
+    (call-with-input-file (string-append *file/category* ".json") parse-json))
 
   ;; create book list for category 'programming/csharp'
   (update-index cats "programming/csharp")
