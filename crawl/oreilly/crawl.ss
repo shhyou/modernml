@@ -55,6 +55,11 @@
      books)
     (newline)))
 
+(define booktitle->filename
+  (let ([delim #[`~!@#$%^&*()_+=\"\':\;<>/?\\\[\]{}|]])
+    (lambda (title)
+      (string-join (string-split title delim) "-"))))
+
 ; category list -> category -> ()
 (define (update-index cats cat)
   (define select-pages
@@ -77,8 +82,10 @@
     (define select-books
       (sxpath '(// table tr ((td) (^ class (equal? "thumbtext"))) div div a)))
     (define (extract-book-info book)
-      `((title . ,(car ((node-pos 2) (sxml:child-nodes book))))
-        (local_href . ,(sxml:string-value ((car-sxpath '(^ href)) book)))))
+      (let ([title (car ((node-pos 2) (sxml:child-nodes book)))]))
+      `((title . ,title)
+        (local_href . ,(sxml:string-value ((car-sxpath '(^ href)) book)))
+        (file . ,(booktitle->filename title))))
     (let* ([url (cdr (assoc "href" (cdr (assoc cat cats))))]
            [idx0 (begin
                    (format #t "Retrieving the first page of '~a'..." cat)
