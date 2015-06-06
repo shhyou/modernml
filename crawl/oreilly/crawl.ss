@@ -7,7 +7,7 @@
 (require "./htmlprag") ; html->sxml
 
 ; delay between GET requests (in seconds)
-(define *get-delay* 10)
+(define *get-delay* 20)
 
 (define *url/oreilly* "shop.oreilly.com")
 (define *uri/category* "/category/browse-subjects.do")
@@ -61,11 +61,11 @@
         (local_href . ,(sxml:string-value ((car-sxpath '(^ href)) book)))))
     (let* ([url (cdr (assoc "href" (cdr (assoc cat cats))))]
            [idx0 (begin
-                   (format #t "Retrieving the first page...\n")
+                   (format #t "Retrieving the first page of '~a'..." cat)
                    (get-oreilly url))]
            [pages (get-pages idx0)]
            [books (begin
-                    (format #t "Extracting books...\n")
+                    ;(format #t "Extracting books\n")
                     (apply append (map select-books pages)))]
            [booksinfo (map extract-book-info books)])
       (call-with-output-file (string-append (cdr (assoc "file" (cdr (assoc cat cats)))))
@@ -112,6 +112,14 @@
                         urls)])
         (construct-json cats port)
         cats))))
+
+(define (main args)
+  (define cats
+    (call-with-input-file (string-append *file/category* ".json") parse-json))
+  (define catlst (map car cats))
+  (define catlst0 (take (drop catlst 20) 80))
+  (format #t "Building index [20,80)\n")
+  (for-each (lambda (cat) (update-index cats cat)) catlst0))
 
 '(
   "example usage"
