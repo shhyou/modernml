@@ -45,7 +45,10 @@ class apress_parse:
 
     def end_category(self, soup):
         for p in soup.find_all('p', 'amount'):
-            a = re.findall('Books \d+-(\d+?) of (\d+)', p.get_text())[0]
+            r = re.findall('Books \d+-(\d+?) of (\d+)', p.get_text())
+            if len(r) == 0:
+                return True
+            a = r[0]
             return a[0] == a[1]
 
     patt = '^Chapter .+[:\.]\s+|^\d+[:\.]\s+|^Ch\. \d+:\s+|^Chapter \d+ -\s+|\s+\d+\.\s+|\d+ - '
@@ -117,13 +120,14 @@ class apress_parse:
                 f = open(filename, 'r')
                 book = json.loads(f.read())
                 f.close()
-                book['category'].append(category.replace('/', ''))
+                if category.replace('/', '') not in book['category']:
+                    book['category'].append(category.replace('/', ''))
             except:
                 None
             f = open(filename, 'w')
             f.write(json.dumps(book))
 
-        print json.dumps(book)        
+        print json.dumps(book)
 
 if __name__ == '__main__':
     hi = apress_parse()
