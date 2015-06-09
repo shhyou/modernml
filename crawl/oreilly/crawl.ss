@@ -1,9 +1,10 @@
 (use srfi-13) ; string library
+(use srfi-43     :only (vector-append)) ; vector library
 (use srfi-11     :only (let-values))
 (use scheme.time :only (current-second))
-(use rfc.http    :only (http-get http-post))
+(use rfc.http    :only (http-get))
 (use rfc.json    :only (parse-json construct-json))
-(use sxml.sxpath :only (sxpath car-sxpath node-pos sxml:string-value sxml:child-nodes))
+(use sxml.sxpath :only (sxpath car-sxpath node-pos sxml:string-value sxml:child-nodes node-or node-join))
 (require "./htmlprag") ; html->sxml
 (use file.util   :only (make-directory*))
 
@@ -15,6 +16,9 @@
 
 (define *file/category* "category")
 (define *file/list* "list-")
+(define *file/data* "data-")
+(define *file/all* "oreilly-data")
+
 (define *dir/html* "./html")
 
 ;; GET request to `shop.oreilly.com` (with proper delay)
@@ -36,8 +40,30 @@
                (error (format #f "Getting url '~a' but got response '~a'"
                               uri response))])))))
 
-; category list -> category -> (forall a. [a] -> [a]) -> ()
-;                            probably selects a sublist
+;; category list -> category -> vector book
+(define (extract-category-toc cats cat)
+  (let ([booksinfo (vector->list
+                    (call-with-input-file
+                        (cdr (assoc "file" (cdr (assoc cat cats)))) parse-json))]
+        [catlst (list->vector (string-split cat "/"))]
+        [query (node-join (sxpath '(// div (() (^ id (equal? "tab_02_2_content"))) table tr td div ol li))
+                          (node-or (sxpath '(h3)) (sxpath '(ol li h4))))])
+    ($ list->vector $
+       filter (lambda (book) (assq 'toc book)) $
+       map (lambda (book)
+             (display ".") (flush)
+             (let ([html (call-with-input-file (string-append *dir/html* "/" (cdr (assoc "file" book))) read)])
+               `((href . ,(string-append "http://" *url/oreilly* (cdr (assoc "local_href" book))))
+                 (title . ,(cdr (assoc "title" book)))
+                 (category . ,catlst)
+                 (toc . ,(list->vector
+                          (filter string?
+                                  (map (lambda (sec) (car ((node-pos -1) (sxml:child-nodes sec))))
+                                       (query html))))))))
+       booksinfo)))
+
+;; category list -> category -> (forall a. [a] -> [a]) -> ()
+;;                            probably selects a sublist
 (define (get-books cats cat sublist)
   (make-directory* *dir/html*)
   (let* ([booksinfo (vector->list
@@ -63,7 +89,7 @@
        "-"
        (string-join (string-split title delim) "-")))))
 
-; category list -> category -> ()
+;; category list -> category -> ()
 (define (update-index cats cat)
   (define select-pages
       (let ([query (sxpath '(// ((select) (^ name (equal? "dirPage"))) option ^ value))])
@@ -104,7 +130,7 @@
             (construct-json (list->vector booksinfo) port)
             json)))))
 
-; () -> ()
+;; () -> ()
 (define (update-category)
   ;; remove top-level categories such as
   ;;   "http://shop.oreilly.com/category/browse-subjects.do"
@@ -149,7 +175,14 @@
   (define catlst (map car cats))
   (for-each
    (lambda (cat)
-     (get-books cats cat (lambda (xs) xs)))
+     (format #t "category: ~a with length ~a\n" cat (vector-length (cdr (assoc cat cats))))
+     (let ([tocs (extract-category-toc cats cat)])
+       (call-with-output-file (string-append
+                               *file/data*
+                               (string-join (string-split cat "/") ",")
+                               ".json")
+         (lambda (port)
+           (construct-json tocs port)))))
    catlst))
 
 '(
