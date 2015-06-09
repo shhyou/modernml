@@ -40,6 +40,19 @@
                (error (format #f "Getting url '~a' but got response '~a'"
                               uri response))])))))
 
+;; category list -> ()
+(define (merge-tocs cats)
+  (call-with-output-file (string-append *file/all* ".json")
+    (lambda (port)
+      (construct-json
+       (apply
+        vector-append
+        (map (lambda (cat)
+               (call-with-input-file (cdr (assoc "tocs" (cdr (assoc cat cats))))
+                 parse-json))
+             (map car cats)))
+       port))))
+
 ;; category list -> category -> vector book
 (define (extract-category-toc cats cat)
   (let ([booksinfo (vector->list
@@ -168,6 +181,10 @@
                                    (file . ,(string-append
                                              *file/list*
                                              (string-join (string-split cat "/") ",")
+                                             ".json"))
+                                   (tocs . ,(string-append
+                                             *file/data*
+                                             (string-join (string-split cat "/") ",")
                                              ".json"))))))
                         urls)])
         (construct-json cats port)
@@ -177,18 +194,7 @@
   (define cats
     (call-with-input-file (string-append *file/category* ".json") parse-json))
   (define catlst (map car cats))
-  (for-each
-   (lambda (cat)
-     (format #t "category: ~a " cat) (flush)
-     (let ([tocs (extract-category-toc cats cat)])
-       (format #t " ~a books\n" (vector-length tocs))
-       (call-with-output-file (string-append
-                               *file/data*
-                               (string-join (string-split cat "/") ",")
-                               ".json")
-         (lambda (port)
-           (construct-json tocs port)))))
-   catlst))
+  (merge-tocs cats))
 
 '(
   "example usage"
