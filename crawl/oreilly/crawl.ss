@@ -49,7 +49,7 @@
         [query (node-join (sxpath '(// div (() (^ id (equal? "tab_02_2_content"))) table tr td div ol li))
                           (node-or (sxpath '(h3)) (sxpath '(ol li h4))))])
     ($ list->vector $
-       filter (lambda (book) (assq 'toc book)) $
+       filter (lambda (book) (pair? (cdr (assq 'toc book)))) $
        map (lambda (book)
              (display ".") (flush)
              (let ([html (call-with-input-file (string-append *dir/html* "/" (cdr (assoc "file" book))) read)])
@@ -175,8 +175,9 @@
   (define catlst (map car cats))
   (for-each
    (lambda (cat)
-     (format #t "category: ~a with length ~a\n" cat (vector-length (cdr (assoc cat cats))))
+     (format #t "category: ~a " cat) (flush)
      (let ([tocs (extract-category-toc cats cat)])
+       (format #t " ~a books\n" (vector-length tocs))
        (call-with-output-file (string-append
                                *file/data*
                                (string-join (string-split cat "/") ",")
