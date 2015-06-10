@@ -12222,7 +12222,7 @@ button.picker__today:focus, button.picker__clear:focus, button.picker__close:foc
 /* line 20, ../sass/main.scss */
 #main-1 {
   margin: 0px auto;
-  min-width: 512px;
+  min-width: 60%;
   -moz-border-radius: 10px;
   -webkit-border-radius: 10px;
   border-radius: 10px;
