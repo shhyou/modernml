@@ -16,15 +16,27 @@ Format
 - Exapmle
 
     ```javascript
-    [ { "toc": "Binary tree",
-        "item": [{"title": "Introduction to Algorithms, third edition",
-                  "href": "https://mitpress.mit.edu/books/introduction-algorithms",
-                  "topic": "Binary search tree"},
-                 {"title": "Algorithms (4th Edition)",
-                  "href": "http://www.amazon.com/gp/product/032157351X/ref=as_li_qf_sp_asin_il_tl?ie=UTF8&tag=algs4-20&linkCode=as2&camp=1789&creative=9325&creativeASIN=032157351X",
-                  "topic": "R-B tree"},
-                ...]
-      }
-      ...
-    ]
+    "toc" : [ { "topic": "Dynamic Programming",
+                "item": [{"title": "Introduction to Algorithms, third edition",
+                          "href": "http://example.com",
+                          "topic": "DP"},
+                         {"title": "Algorithms (4th Edition)",
+                          "href": "http://example.com",
+                          "topic": "Dynamic Programming"},
+                         {"title": "Data structure and Algorithms",
+                          "href": "http://example.com",
+                          "topic": "動態規劃"},
+                        ...]
+              },
+              { "topic": "binary search tree",
+                "item": [{"title": "Introduction to Algorithms, third edition",
+                          "href": "http://example.com",
+                          "topic": "binary search tree"},
+                         {"title": "Algorithms (4th Edition)",
+                          "href": "http://example.com",
+                          "topic": "binary tree"},
+                        ...]
+              },
+              ...
+            ]
     ```
