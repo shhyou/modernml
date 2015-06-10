@@ -1,0 +1,54 @@
+@import "compass/css3";
+@import "materialize.scss";
+
+.ms-jh {
+  font-family: "微軟正黑體";
+}
+
+.bg {
+	background-image: url('images/bg2-1.png');
+	background-repeat: no-repeat;
+	background-size: cover;
+}
+
+.bg2 {
+	background-image: url('images/bg3.png');
+	background-repeat: no-repeat;
+	background-size: cover;
+}
+
+#main-1 {
+	margin: 0px auto;
+	min-width: 512px;
+	@include border-radius(10px);
+}
+
+#overlay {
+	background-color: rgba(158, 158, 158, 0.6);
+	position: fixed;
+	left: 0px;
+	top: 0px;
+	z-index: 5;
+	display: none;
+	@include opacity(0);
+
+  .progress {
+  	position: relative;
+	  top: 50%;
+	  transform: translateY(-50%);
+  }
+}
+
+.noun-tab {
+  text-align: center;
+  cursor: pointer;
+  height: 24px;
+  line-height: 24px;
+}
+
+#loading {
+	height: 32px;
+	width: 32px;
+	position: relative;
+	margin: 0px auto;
+}

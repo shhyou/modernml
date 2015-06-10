@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <!--Import materialize.css-->
+    <link rel="stylesheet" href="stylesheets/main.css">
+
+    <!--Import fontastic.css-->
+    <link rel="stylesheet" href="stylesheets/fontastic.css">
+
+    <!--Let browser know website is optimized for mobile-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+
+    <meta charset="utf-8">
+
+    <!--Import jQuery before materialize.js-->
+    <script type="text/javascript" src="js/jquery-2.1.1.min.js"></script>
+    <script type="text/javascript" src="js/materialize.min.js"></script>
+
+    <!--Import raphael before flowchart.jss-->
+    <script type="text/javascript" src="js/raphael-min.js"></script>
+    <script type="text/javascript" src="js/flowchart-latest.js"></script>
+
+    <!--Import main javascript-->
+    <script type="text/javascript" src="js/main.js"></script>
+
+    <title>高速學習輔助系統</title>
+
+  </head>
+
+  <body>
+    <!--nav-->
+    <nav class="blue darken-2" role="navigation">
+      <div class="nav-wrapper container"><a id="logo-container" href="." class="brand-logo">Logo</a>
+      </div>
+    </nav>
+    <!--index-->
+    <div class="section no-pad-bot bg" id="index-banner">
+      <div class="container">
+        <br><br>
+        <h1 class="header center orange-text text-darken-1 ms-jh">卍煞氣der新世紀高速學習輔助系統卐</h1>
+        <div class="row center">
+          <h5 class="header col s12 light white-text">High speed learning support system type-SCD(Sha-Chi-Der)</h5>
+        </div>
+        <div class="row center">
+          <a href="#" id="start-button" class="btn-large waves-effect waves-light blue">Get Started</a>
+        </div>
+        <br><br>
+
+      </div>
+    </div>
+
+    <!--container-1-->
+    <div class="container">
+      <div class="section">
+
+        <!--   Icon Section   -->
+        <div class="row">
+          <div class="col s12 m4">
+            <div class="icon-block">
+              <h2 class="center orange-text text-lighten-1"><i class="fontastic-speed"></i></h2>
+              <h5 class="center ms-jh">高速</h5>
+            </div>
+          </div>
+
+          <div class="col s12 m4">
+            <div class="icon-block">
+              <h2 class="center orange-text text-lighten-1"><i class="fontastic-learn"></i></h2>
+              <h5 class="center ms-jh">學習</h5>
+            </div>
+          </div>
+
+          <div class="col s12 m4">
+            <div class="icon-block">
+              <h2 class="center orange-text text-lighten-1"><i class="fontastic-playstation"></i></h2>
+              <h5 class="center ms-jh">煞氣</h5>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="section bg2" id="main">
+      <div class="container valign-wrapper">
+        <div class="card-panel valign row" id="main-1">
+          <div class="section col m12 s12">
+            <form class="col s12" id="form">
+              <div class="row">
+                <div class="input-field col s12">
+                  <i class="mdi-communication-vpn-key prefix"></i>
+                  <input id="key" type="text" class="validate">
+                  <label for="icon_prefix">Keyword</label>
+                </div>
+                <button class="btn waves-effect waves-light col s3 offset-s2" type="submit" name="action" id="submit">Submit
+                  <i class="mdi-content-send right"></i>
+                </button>
+
+                <button class="btn waves-effect waves-light col s3 offset-s2 ms-jh" type="submit" name="action" id="good">好手氣
+                  <i class="mdi-action-thumb-up right"></i>
+                </button>
+              </div>
+            </form>
+            <div id="explanation" class="hide col s12">
+            </div>
+            <ul class="col s12 hide" id="noun">
+            </ul>
+            <div class="col s12" id="diagram"></div>
+          </div>
+          <div class="section col m3 s12 hide">
+            <h5 class="teal-text">Suggest Link</h5>
+            <ul id='rel-link'>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!--overlay-->
+    <div id="overlay">
+      <div class="progress">
+        <div class="indeterminate"></div>
+      </div>
+    </div>
+        
+    <!--foot-->
+    <footer class="page-footer light-blue" style="margin-top: 0px;">
+      <div class="container">
+        <div class="row">
+          <div class="col l8 s12">
+            <h5 class="white-text">Team</h5>
+            <p class="grey-text text-lighten-4">We are a team of NTU(National Taiwan University) students working on this project.</p>
+            <ul>
+              <li class="white-text ms-jh">b00901166 電機四 夏誌陽 <a href="mailto:b00901166@ntu.edu.tw" target="_top" class="white-text">b00901166@ntu.edu.tw</a></li>
+              <li class="white-text ms-jh">b00902107 資訊四 游書泓 <a href="mailto:b00902107@ntu.edu.tw" target="_top" class="white-text">b00902107@ntu.edu.tw</a></li>
+              <li class="white-text ms-jh">b01902112 資訊三 陳亮傑 <a href="mailto:b01902112@ntu.edu.tw" target="_top" class="white-text">b01902112@ntu.edu.tw</a></li>
+            </ul>
+          </div>
+
+          <div class="col l4 s12">
+            <h5 class="white-text">Connect</h5>
+            <ul>
+              <li><a class="white-text" href="https://en.wikipedia.org/">Wiki pedia</a></li>
+              <li><a class="white-text" href="http://www.oreilly.com/">O'Reilly</a></li>
+              <li><a class="white-text" href="http://www.apress.com/">Apress</a></li>
+              <li><a class="white-text" href="http://ocw.mit.edu/">MIT open course ware</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="footer-copyright">
+        <div class="container">
+        Website made by <a class="orange-text text-lighten-3" href="http://materializecss.com">Materialize</a>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
