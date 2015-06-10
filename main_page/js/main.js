@@ -26,6 +26,7 @@ function hideOverlay(){
 	setTimeout("$('#overlay').hide();", 1000);
 }
 
+var loading = $('<div id="loading"><img src="stylesheets/images/support-loading.gif" height="32px" width="32px"></img></div>');
 function process(res){
 	$(".hide").removeClass("hide");
 	$("#form").parent().removeClass("m12").addClass("m9");
@@ -39,7 +40,7 @@ function process(res){
 		var li = $("<li>").html(res.noun[i]);
 		li.addClass("z-depth-1 col s3 blue-text noun-tab truncate");
 		li.click(function(){
-			$("#explanation").html('<div id="loading"><img src="stylesheets/images/support-loading.gif" height="32px" width="32px"></img></div>');
+			$("#explanation").html(loading);
 			if (ws.readyState != ws.OPEN){
 	      q_vocab = this.innerText;
 	    	connect();
