@@ -46,6 +46,25 @@
   line-height: 24px;
 }
 
+.toc-tab {
+	text-align: center;
+	cursor: pointer;
+	height: 32px;
+	line-height: 32px;
+	font-size: 16px;
+}
+
+.rel-link-header {
+	height: 32px;
+	line-height: 32px;	
+	font-size: 15px;
+}
+
+.rel-link-body {
+	font-size: 14px;
+	padding: 8px 14px;
+}
+
 #loading {
 	height: 32px;
 	width: 32px;

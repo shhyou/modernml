@@ -15,11 +15,6 @@
     <!--Import jQuery before materialize.js-->
     <script type="text/javascript" src="js/jquery-2.1.1.min.js"></script>
     <script type="text/javascript" src="js/materialize.min.js"></script>
-
-    <!--Import raphael before flowchart.jss-->
-    <script type="text/javascript" src="js/raphael-min.js"></script>
-    <script type="text/javascript" src="js/flowchart-latest.js"></script>
-
     <!--Import main javascript-->
     <script type="text/javascript" src="js/main.js"></script>
 
@@ -100,15 +95,21 @@
                 </button>
               </div>
             </form>
-            <div id="explanation" class="hide col s12">
+            <div class="hide col s12">
+              <h5 class="teal-text">Terms</h5>              
+              <div id="explanation" class="col s12">
+              </div>
+              <ul class="col s12 hide" id="noun">
+              </ul>
             </div>
-            <ul class="col s12 hide" id="noun">
-            </ul>
-            <div class="col s12" id="diagram"></div>
+            <div class="hide col s12">
+              <h5 class="teal-text">Table of Contents</h5> 
+              <ul class="col s12 hide" id="toc"></ul>
+            </div>
           </div>
           <div class="section col m3 s12 hide">
-            <h5 class="teal-text">Suggest Link</h5>
-            <ul id='rel-link'>
+            <h5 class="teal-text">Relative Link</h5>
+            <ul id='rel-link' class="collapsible">
             </ul>
           </div>
         </div>

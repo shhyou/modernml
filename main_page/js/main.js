@@ -26,6 +26,23 @@ function hideOverlay(){
 	setTimeout("$('#overlay').hide();", 1000);
 }
 
+function registerRelLink(li, topic){
+  li.click(function(){
+    $("#rel-link").html("");
+    for (var j = 0; j < topic.item.length; j++){
+      var tmp = $("<li>");
+      var hdiv = $("<div>").addClass("collapsible-header truncate rel-link-header orange-text").html(topic.item[j].title).attr("title", topic.item[j].title);
+      var bdiv = $("<div>").addClass("collapsible-body rel-link-body").html(topic.item[j].topic);
+      bdiv.append($("<a>").addClass("right").attr("href", topic.item[j].href).attr("target", "_new").html('<i class="mdi-action-exit-to-app"></i>Link'));
+      tmp.append(hdiv).append(bdiv);
+      $("#rel-link").append(tmp);
+    }
+    $('.collapsible').collapsible({
+      accordion : false // A setting that changes the collapsible behavior to expandable instead of the default accordion style
+    });
+  });
+}
+
 var loading = $('<div id="loading"><img src="stylesheets/images/support-loading.gif" height="32px" width="32px"></img></div>');
 function process(res){
 	$(".hide").removeClass("hide");
@@ -35,10 +52,11 @@ function process(res){
 	$("#key").focus();
 
 	//add noun tab
+  res.noun = res.terms;
 	$("#noun").html("");
 	for (var i = 0; i < res.noun.length; i++){
 		var li = $("<li>").html(res.noun[i]);
-		li.addClass("z-depth-1 col s3 blue-text noun-tab truncate");
+		li.addClass("z-depth-1 col s3 blue-text noun-tab truncate waves-effect");
 		li.click(function(){
 			$("#explanation").html(loading);
 			if (ws.readyState != ws.OPEN){
@@ -53,7 +71,8 @@ function process(res){
 	}
 
 	//fixed noun tab
-	liList = document.getElementsByClassName("noun-tab");
+	/*
+  liList = document.getElementsByClassName("noun-tab");
 	for (var i = 0; i < res.noun.length; i += 4){
 		var minH = 0;
 		for (var j = 0; j < 4 && i + j < res.noun.length; j++)
@@ -61,20 +80,14 @@ function process(res){
 		for (var j = 0; j < 4 && i + j < res.noun.length; j++)
 			$(liList[i + j]).css("height", minH + "px");
 	}
+  */
 
-	// add suggest link
-	$("#rel-link").html("");
-	for (var i = 0; i < res.link.length; i++){
-		var a = $("<a>").html(res.link[i].title).attr("href", res.link[i].href).addClass("teal-text text-lighten-2");
-		var li = $("<li>").append(a).attr("title", res.link[i].title);
-		li.addClass("z-depth-1 col s12 noun-tab truncate");
-		$("#rel-link").append(li);
-	}
-
-	// draw flowchart
-	$("#diagram").html("");
-	var diagram = flowchart.parse(res.flowchart);
-  diagram.drawSVG('diagram');
+  for (var i = 0; i < res.toc.length; i++){
+    var li = $("<li>").html(res.toc[i].topic);
+    li.addClass("col s12 z-depth-1 toc-tab waves-effect");
+    registerRelLink(li, res.toc[i]);
+    $("#toc").append(li);
+  }
 }
 
 var ws, q_vocab;

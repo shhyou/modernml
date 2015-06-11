@@ -12255,6 +12255,28 @@ button.picker__today:focus, button.picker__clear:focus, button.picker__close:foc
 }
 
 /* line 49, ../sass/main.scss */
+.toc-tab {
+  text-align: center;
+  cursor: pointer;
+  height: 32px;
+  line-height: 32px;
+  font-size: 16px;
+}
+
+/* line 57, ../sass/main.scss */
+.rel-link-header {
+  height: 32px;
+  line-height: 32px;
+  font-size: 15px;
+}
+
+/* line 63, ../sass/main.scss */
+.rel-link-body {
+  font-size: 14px;
+  padding: 8px 14px;
+}
+
+/* line 68, ../sass/main.scss */
 #loading {
   height: 32px;
   width: 32px;
