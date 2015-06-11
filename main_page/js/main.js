@@ -82,6 +82,7 @@ function process(res){
 	}
   */
 
+  $("#toc").html("");
   for (var i = 0; i < res.toc.length; i++){
     var li = $("<li>").html(res.toc[i].topic);
     li.addClass("col s12 z-depth-1 toc-tab waves-effect");
