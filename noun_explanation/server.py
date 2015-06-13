@@ -7,17 +7,9 @@ import tornado.websocket
 
 import datetime
 
-import httplib
-import urllib
 from urlparse import urlparse
 import re
-
-def getResponse(url):
-	print url
-	tmpurl = urlparse(url)
-	conn = httplib.HTTPConnection(tmpurl.netloc)
-	conn.request('GET', tmpurl.path)
-	return conn.getresponse()
+import requests
 
 def cutWithFirstDot(string):
 	left = right = 0
@@ -40,10 +32,8 @@ def fixedLink(string):
 	return string
 
 def getExplanationFromWiki(vocab):
-	res = getResponse('http://en.wikipedia.org/wiki/' + urllib.quote(vocab))
-	if res.getheader('location', None) != None:
-		res = getResponse(res.getheader('location'))
-	content = res.read().replace('\n', '').replace('\r', '').replace('\t', '')
+	res = requests.get('http://en.wikipedia.org/wiki/' + vocab)
+	content = res.text.replace('\n', '').replace('\r', '').replace('\t', '')
 	content = re.sub(r'<table.+?</table>', '', content)
 	if content.find('Wikipedia does not have an article with this exact name.') != -1:
 		return '<b>Wikipedia</b> does not have an article with this exact name.'
