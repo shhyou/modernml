@@ -42,7 +42,7 @@ I2A = {
 
 class MainHandler(tornado.web.RequestHandler):
 	def get(self):
-		self.render('./index.html')
+		self.render('./http/index.html')
 
 class NoCacheStaticFileHandler(tornado.web.StaticFileHandler):
 	def set_extra_headers(self, path):
@@ -58,9 +58,9 @@ if __name__ == '__main__':
 
 	application = tornado.web.Application([
 		(r'/', MainHandler),
-		(r'/js/(.+)', NoCacheStaticFileHandler, {'path': './js'}),
-		(r'/stylesheets/(.+)', NoCacheStaticFileHandler, {'path': './stylesheets'}),
-		(r'/font/(.+)', NoCacheStaticFileHandler, {'path': './font'}),
+		(r'/js/(.+)', NoCacheStaticFileHandler, {'path': './http/js'}),
+		(r'/stylesheets/(.+)', NoCacheStaticFileHandler, {'path': './http/stylesheets'}),
+		(r'/font/(.+)', NoCacheStaticFileHandler, {'path': './http/font'}),
 		(r'/random', RandomKeywordHandler),
 	])
 
