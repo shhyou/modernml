@@ -1,4 +1,4 @@
-import configs
+import common
 
 def search(keyword):
   """Search related books/courses from the keyword
@@ -10,8 +10,7 @@ def search(keyword):
   """
 
   # Possibly TODO: normalize keywords (stopwords & stemming & cases)
-  keyword = keyword.lower().replace("'s", "")
-  uni_keywords = keyword.split()
+  uni_keywords = common.simpl_stopwords_split(keyword.lower())
   if len(uni_keywords) > 1:
     bi_keywords = [" ".join(ws) for ws in zip(uni_keywords, uni_keywords[1:])]
   else:
@@ -19,7 +18,7 @@ def search(keyword):
 
   idset = []
   for keyword2 in bi_keywords:
-    for vocab in configs.ITEM_VOCABS.itervalues():
+    for vocab in common.ITEM_VOCABS.itervalues():
       if keyword2 in vocab["vocabs"]:
         idset.append(vocab[u"id"])
 

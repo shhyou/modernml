@@ -1,4 +1,4 @@
-import configs
+import common
 
 def generate(ids):
   """Generate terminologies related to ids
@@ -9,15 +9,32 @@ def generate(ids):
 
   vocab_count = {}
   for item in ids:
-    for vocab in configs.ITEM_VOCABS[item][u"vocabs"]:
+    for vocab in common.ITEM_VOCABS[item][u"vocabs"]:
       if vocab not in vocab_count:
         vocab_count[vocab] = 1
       else:
         vocab_count[vocab] = vocab_count[vocab] + 1
-  vs = list(v for v, c in vocab_count.items() if c > 10)
+  vs = list((c, v.count(" "), v) for v, c in vocab_count.items() if " " in v)
   vs.sort()
   vs.reverse()
-  return vs
+  zs = []
+  counts = dict((v, c) for c, _, v in vs)
+  for c, gram, v in vs:
+    if gram == 3:
+      zs.append((c, gram, v))
+      ws = v.split()
+      w1, w2 = ws[0]+" "+ws[1], ws[1]+" "+ws[2]
+      if w1 in counts:
+        counts[w1] = counts[w1] - c
+      if w2 in counts:
+        counts[w2] = counts[w2] - c
+    elif gram == 2:
+      c_ = counts.pop(v)
+      zs.append((c_, gram, v))
+
+  zs.sort()
+  zs.reverse()
+  return [v for _, _, v in zs]
 
 if __name__ == "__main__":
   print "keyword test"
