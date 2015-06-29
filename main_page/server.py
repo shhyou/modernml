@@ -10,10 +10,14 @@ import urlparse
 import datetime
 import json
 
+from retrieval.item_search import search as item_search
+from retrieval.keyword import generate as keyword_generate
+from retrieval.flow import generate as flow_generate
+
 I2A = {
 	'keyword': 'algorithm',
 	'terms': ['algorithm', 'sort', 'divide and conquer', 'heapsort', 'quicksort', 'median'
-			, 'data structure', 'hash', 'hash table', 'binary search tree', 'red-black tree'
+			, 'data structure', 'hash', 'hash table', 'binary search tree', 'red black tree'
 			, 'dynamic programming', 'greedy algorithm', 'amortized analysis', 'B tree'
 			, 'fibonacci heap', 'minimum spanning tree'],
 	'toc' : [ { 'topic': 'Dynamic Programming',
@@ -50,11 +54,28 @@ class SubmitHandler(tornado.web.RequestHandler):
 			key = self.get_argument('q')
 			res = {}
 			res['keywords'] = key
-			res['terms'] = [key]
-			res['toc'] = [{'topic': key}]
+			try:
+				ids = item_search(key)
+			except:
+				self.set_status(404)
+				print 'item_search(key) error.'
+				return
+			try:
+				res['terms'] = keyword_generate(ids)
+			except:
+				self.set_status(404)
+				print 'keyword_generate(ids) error.'
+				return
+			try:
+				ret['toc'] = flow_generate(ids)
+			except:
+				self.set_status(404)
+				print 'flow_generate(ids) error.'
+				return
 			self.write(json.dumps(res))
 		except:
 			self.set_status(404)
+			self.write('no parameter "q".')
 
 class NoCacheStaticFileHandler(tornado.web.StaticFileHandler):
 	def set_extra_headers(self, path):

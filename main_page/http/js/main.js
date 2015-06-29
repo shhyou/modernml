@@ -43,14 +43,21 @@ function registerRelLink(li, topic){
   });
 }
 
+var keyword_now;
+function send_noun(vocab){
+  ws.send(JSON.stringify({"vocab": vocab, "keyword": keyword_now}));
+}
+
 var loading = $('<div id="loading"><img src="stylesheets/images/support-loading.gif" height="32px" width="32px"></img></div>');
 function process(res){
   $("#explanation").html('');
 	$(".hide").removeClass("hide");
-	$("#form").parent().removeClass("m12").addClass("m9");
+	//$("#form").parent().removeClass("m12").addClass("m9");
 	$("#main-1").css("min-width", "85%");
 	$("#key").val(res.keyword);
 	$("#key").focus();
+
+  keyword_now = res.keyword;
 
 	//add noun tab
   res.noun = res.terms;
@@ -62,10 +69,10 @@ function process(res){
 			$("#explanation").html(loading);
 			if (ws.readyState != ws.OPEN){
 	      q_vocab = this.innerText;
-	    	connect();
+	    	connectWS();
 	    }
 	    else
-				ws.send(this.innerText)
+        send_noun(this.innerText);
 		});
 		li.attr("title", res.noun[i]);
 		$("#noun").append(li);
@@ -99,16 +106,31 @@ function connectWS(){
   ws.onopen = function(){
     console.log("connect to: " + url + " success!");
     if (q_vocab != null){
-    	ws.send(q_vocab);
+      send_noun(q_vocab);
     	q_vocab = null;
     }
   };
   ws.onmessage = function(response){
-  	$("#explanation").html(response.data);
+    var res = JSON.parse(response.data);
+    $("#explanation").html("");
+  	$("#explanation").append($("<span>").html(res.content));
+    $('#explanation').append("<br><br>");
+    var span = $("<span>");
+    $("#explanation").append(span);
+    for (var i = 0; i < Math.min(res.others.length, 4); i++){
+      res.others[i] = decodeURIComponent(decodeURI(decodeURI(res.others[i])));
+      if (i == 0)
+        span.append("Others: ");
+      else
+        span.append(", ");
+      var a = $("<a>");
+      span.append(a);
+      a.attr("href", "https://en.wikipedia.org/wiki/" + res.others[i]).attr("target", "_new").html(res.others[i]);
+    }
   };
   ws.onerror = function(){
   	console.log("connection failed.");
-  	setTimeout(connect, 5000);
+  	setTimeout(connectWS, 5000);
   }
 }
 
@@ -174,4 +196,3 @@ window.onload = function(){
 
   connectWS();
 };
-
