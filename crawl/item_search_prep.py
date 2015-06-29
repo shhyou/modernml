@@ -1,15 +1,22 @@
 #!/usr/bin/env python2
 
 import json
+import stoplist
+
+PUNCTUATIONS = stoplist.PUNCTUATIONS.split()
+STOP_WORDS = set(stoplist.STOP_WORDS.split())
+
+def simpl_stopwords_split(s):
+  for punc in PUNCTUATIONS:
+    s = s.replace(punc, "")
+  return [w for w in s.split() if not (w in STOP_WORDS or w.isdigit())]
 
 res = []
 for fil in ["apress", "oreilly-data-id.json", "mit.json"]:
   with open(fil, "r") as filp:
     data = json.load(filp)
   for item in data:
-    words = [w for sec in item[u"toc"] for w in sec.split()]
-    words = [w.replace("'s", "").replace(",", "") for w in words]
-    words = [w.lower() for w in words]
+    words = [w for sec in item[u"toc"] for w in simpl_stopwords_split(sec.lower())]
     words = [w for w in words if w != u"&"]
     # TODO: stemming and stopwords
     words = words \

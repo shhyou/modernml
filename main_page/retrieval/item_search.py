@@ -1,5 +1,10 @@
 import configs
 
+def simpl_stopwords_split(s):
+  for punc in configs.PUNCTUATIONS:
+    s = s.replace(punc, "")
+  return [w for w in s.split() if not (w in configs.STOP_WORDS or w.isdigit())]
+
 def search(keyword):
   """Search related books/courses from the keyword
 
@@ -10,8 +15,7 @@ def search(keyword):
   """
 
   # Possibly TODO: normalize keywords (stopwords & stemming & cases)
-  keyword = keyword.lower().replace("'s", "")
-  uni_keywords = keyword.split()
+  uni_keywords = simpl_stopwords_split(keyword.lower())
   if len(uni_keywords) > 1:
     bi_keywords = [" ".join(ws) for ws in zip(uni_keywords, uni_keywords[1:])]
   else:
