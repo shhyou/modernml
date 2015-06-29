@@ -57,17 +57,14 @@ class mit_parse:
                 fname = 'json/'+url.strip().replace('/','_')+'.json'
                 if os.path.isfile(fname):
                     print('file exist!!!')
+                    self.c_num+=1
+                    self.good+=1
                     continue
                 obj = self.parse_course_json(url.strip())
                 print(obj)
                 if 'title' in obj:
-                    fname = 'json/'+url.strip().replace('/','_')+'.json'
-                    if os.path.isfile(fname):
-                        print('file exist!!!')
-                        continue
-                    else:
-                        jfile = open(fname,'w')
-                        jfile.write(json.dumps(obj))
+                    jfile = open(fname,'w')
+                    jfile.write(json.dumps(obj))
                     #res.append(obj)
         #fout.write(json.dumps(res))
         #return json.dumps(res)
@@ -96,12 +93,18 @@ class mit_parse:
         print soup.find_all('div',id='course_inner_section')
 
     def parse_course_title(self, url):
+        ori_url = url
         url = self.pre_url + url
         r = requests.get(url)
         soup = BeautifulSoup(r.text)
         titles = soup.find_all('h1',{'class':'title'})
+        a = soup.find_all('a')
+        w = False
+        for aa in a:
+            if aa.get('href') == ori_url+'/calendar':
+                w = True
+        assert w
         assert len(titles)==1
-        #print(titles[0])
         return titles[0].text
 
     def parse_course_calendar(self, url):
@@ -129,7 +132,7 @@ if __name__ == '__main__':
     #print(hi.parse_course_title('courses/electrical-engineering-and-computer-science/6-006-introduction-to-algorithms-fall-2011'))
     #print(json.dumps(hi.parse_course_json('/courses/electrical-engineering-and-computer-science/6-006-introduction-to-algorithms-fall-2011')))
     #print(json.dumps(hi.parse_course_json('/courses/anthropology/21a-225j-violence-human-rights-and-justice-fall-2004')))
-
+    #print(json.dumps(hi.parse_course_json('/courses/mathematics/18-338j-infinite-random-matrix-theory-fall-2004')))
     print(hi.parse_all_course_json())
     # hi.parse_dept()
     # hi.parse_courses()
