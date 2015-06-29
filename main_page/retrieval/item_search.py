@@ -1,11 +1,5 @@
 import configs
 
-import json
-
-with open(configs.ITEM_VOCABS, "r") as filp:
-  item_vocabs = [{u"id": vocab[u"id"], u"vocabs": set(vocab[u"vocabs"]) } \
-                 for vocab in json.load(filp)]
-
 def search(keyword):
   """Search related books/courses from the keyword
 
@@ -25,7 +19,7 @@ def search(keyword):
 
   idset = []
   for keyword2 in bi_keywords:
-    for vocab in item_vocabs:
+    for vocab in configs.ITEM_VOCABS.itervalues():
       if keyword2 in vocab["vocabs"]:
         idset.append(vocab[u"id"])
 

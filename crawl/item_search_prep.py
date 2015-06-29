@@ -2,10 +2,10 @@
 
 import json
 
-for fil in ["apress", "oreilly-data-id.json"]:
+res = []
+for fil in ["apress", "oreilly-data-id.json", "mit.json"]:
   with open(fil, "r") as filp:
     data = json.load(filp)
-  res = []
   for item in data:
     words = [w for sec in item[u"toc"] for w in sec.split()]
     words = [w.replace("'s", "").replace(",", "") for w in words]
