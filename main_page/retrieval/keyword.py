@@ -16,8 +16,8 @@ def generate(ids, limit=2147483647):
       counts[gram][vocab] += 1
 
   vs = []
-  for i in xrange(common.GRAM_MAX-1,-1,-1):
-    vocabcounts = [(counts[i][v]*(i+1)*(i+1), i+1, v) for v in counts[i]]
+  for i in xrange(common.GRAM_MAX-1,-1,-1):  # magic! why **2?
+    vocabcounts = [(counts[i][v]*(common.VOCABS_IDF[v]**2), i+1, v) for v in counts[i]]
     vocabcounts.sort()
     vocabcounts.reverse()
     vocabcounts = vocabcounts[:limit]

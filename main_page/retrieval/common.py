@@ -2,6 +2,7 @@ import json
 
 FILE_LIST = ["apress", "oreilly-data-id.json", "mit.json"]
 ITEM_VOCABS_FILE = "item-vocabs.json"
+VOCABS_IDF_FILE = "vocabs-idf.json"
 
 GRAM_MAX = 4
 
@@ -20,6 +21,9 @@ with open(ITEM_VOCABS_FILE, "r") as filp:
 ITEM_VOCABS = {}
 for vocab in ITEM_VOCABS_:
   ITEM_VOCABS[vocab[u"id"]] = vocab
+
+with open(VOCABS_IDF_FILE, "r") as filp:
+  VOCABS_IDF = json.load(filp)
 
 import stoplist
 PUNCTUATIONS = stoplist.PUNCTUATIONS.split()
