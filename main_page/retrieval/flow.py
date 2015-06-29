@@ -1,4 +1,4 @@
-import configs
+import common
 
 def generate(ids):
   """Generate

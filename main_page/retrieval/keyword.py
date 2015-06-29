@@ -1,4 +1,4 @@
-import configs
+import common
 
 def generate(ids):
   """Generate terminologies related to ids
@@ -9,7 +9,7 @@ def generate(ids):
 
   vocab_count = {}
   for item in ids:
-    for vocab in configs.ITEM_VOCABS[item][u"vocabs"]:
+    for vocab in common.ITEM_VOCABS[item][u"vocabs"]:
       if vocab not in vocab_count:
         vocab_count[vocab] = 1
       else:
