@@ -1,4 +1,4 @@
-var url = "ws://toscanini.m6.ntu.edu.tw:8000/";
+var url = "ws://linux17.csie.ntu.edu.tw:8357/";
 
 function initialize(){
   var input = document.getElementById("noun");
@@ -38,8 +38,10 @@ function initialize(){
       q_vocab = vocab;
     	connect();
     }
-    else
-  		ws.send(vocab);
+    else{
+      j = JSON.stringify({"vocab": vocab, "keyword": ""});
+  		ws.send(j);
+    }
   });
 
   connect();
