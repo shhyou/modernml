@@ -45,6 +45,7 @@ function registerRelLink(li, topic){
 
 var loading = $('<div id="loading"><img src="stylesheets/images/support-loading.gif" height="32px" width="32px"></img></div>');
 function process(res){
+  $("#explanation").html('');
 	$(".hide").removeClass("hide");
 	$("#form").parent().removeClass("m12").addClass("m9");
 	$("#main-1").css("min-width", "85%");
@@ -143,8 +144,34 @@ window.onload = function(){
       }
   	});
   });
+  $("#submit").click(function(e){
+    e.preventDefault();
+
+    var query = $('#key').val();
+    if (query == '')
+      return;
+
+    showOverlay();
+
+    $.ajax({
+      url: "/submit",
+      type: "GET",
+      dataType:'json',
+      data: {"q": query},
+
+      success: function(res){
+          process(res);
+          hideOverlay();
+      },
+
+      error:function(xhr, ajaxOptions, thrownError){
+        alert(xhr.status);
+        alert(thrownError);
+        hideOverlay();
+      }
+    });
+  });
 
   connectWS();
 };
 
-s = "st=>start: Start:>http://www.google.com[blank]\ne=>end:>http://www.google.com\nop1=>operation: My Operation\nsub1=>subroutine: My Subroutine\ncond=>condition: Yes\nor No?:>http://www.google.com\nio=>inputoutput: catch something...\n\nst->op1->cond\ncond(yes)->io->e\ncond(no)->sub1(right)->op1\n"
