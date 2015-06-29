@@ -17,11 +17,11 @@ for fil in ["apress", "oreilly-data-id.json", "mit.json"]:
     data = json.load(filp)
   for item in data:
     words = [w for sec in item[u"toc"] for w in simpl_stopwords_split(sec.lower())]
-    words = [w for w in words if w != u"&"]
     # TODO: stemming and stopwords
     words = words \
           + [" ".join(ws) for ws in zip(words, words[1:])] \
-          + [" ".join(ws) for ws in zip(words, words[1:], words[2:])]
+          + [" ".join(ws) for ws in zip(words, words[1:], words[2:])] \
+          + [" ".join(ws) for ws in zip(words, words[1:], words[2:], words[3:])]
     words = list(set(words))
     words.sort()
     res.append({u"id": item[u"id"], u"vocabs": words})

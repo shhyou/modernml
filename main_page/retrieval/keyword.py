@@ -1,40 +1,37 @@
 import common
 
-def generate(ids):
+def generate(ids, limit=2147483647):
   """Generate terminologies related to ids
 
   ids: A list of integers. The IDs of related items.
   returns: A list of strings, each of which is a terminology.
   """
 
-  vocab_count = {}
-  for item in ids:
-    for vocab in common.ITEM_VOCABS[item][u"vocabs"]:
-      if vocab not in vocab_count:
-        vocab_count[vocab] = 1
-      else:
-        vocab_count[vocab] = vocab_count[vocab] + 1
-  vs = list((c, v.count(" "), v) for v, c in vocab_count.items() if " " in v)
+  counts = [{} for i in xrange(common.GRAM_MAX)]
+  for vocab in [vocab for item in ids for vocab in common.ITEM_VOCABS[item][u"vocabs"]]:
+    gram = vocab.count(" ")
+    if vocab not in counts[gram]:
+      counts[gram][vocab] = 1
+    else:
+      counts[gram][vocab] += 1
+
+  vs = []
+  for i in xrange(common.GRAM_MAX-1,-1,-1):
+    vocabcounts = [(counts[i][v]*(i+1)*(i+1), i+1, v) for v in counts[i]]
+    vocabcounts.sort()
+    vocabcounts.reverse()
+    vocabcounts = vocabcounts[:limit]
+    vs += vocabcounts
+    if i > 0:
+      for c, _, v in vocabcounts:
+        vw = v.split()
+        v1 = " ".join(vw[1:])
+        v2 = " ".join(vw[:-1])
+        counts[i-1][v1] -= c
+        counts[i-1][v2] -= c
   vs.sort()
   vs.reverse()
-  zs = []
-  counts = dict((v, c) for c, _, v in vs)
-  for c, gram, v in vs:
-    if gram == 3:
-      zs.append((c, gram, v))
-      ws = v.split()
-      w1, w2 = ws[0]+" "+ws[1], ws[1]+" "+ws[2]
-      if w1 in counts:
-        counts[w1] = counts[w1] - c
-      if w2 in counts:
-        counts[w2] = counts[w2] - c
-    elif gram == 2:
-      c_ = counts.pop(v)
-      zs.append((c_, gram, v))
-
-  zs.sort()
-  zs.reverse()
-  return [v for _, _, v in zs]
+  return [v for _, _, v in vs][:limit]
 
 if __name__ == "__main__":
   print "keyword test"

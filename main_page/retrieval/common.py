@@ -3,6 +3,8 @@ import json
 FILE_LIST = ["apress", "oreilly-data-id.json", "mit.json"]
 ITEM_VOCABS_FILE = "item-vocabs.json"
 
+GRAM_MAX = 4
+
 DOCUMENT_LIST = {}
 
 for fil in FILE_LIST:
