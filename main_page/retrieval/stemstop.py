@@ -1469,6 +1469,7 @@ def stem(w):
   if w[-3:] in STEM_ES_ENDING:
     w = w[:-2]
   elif w[-1] == "s" and w[-4:] != "less" and w[-3:] != "ies" \
+       and w[-2:] != "us" and w[-2:] != "ss" \
        and w not in STEM_S_FORBID:
     w = w[:-1]
   return w
