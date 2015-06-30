@@ -31,7 +31,7 @@ function registerRelLink(li, topic){
     $("#rel-link").html("");
     for (var j = 0; j < topic.item.length; j++){
       var tmp = $("<li>");
-      var hdiv = $("<div>").addClass("collapsible-header truncate rel-link-header orange-text").html(topic.item[j].title).attr("title", topic.item[j].title);
+      var hdiv = $("<div>").addClass("collapsible-header truncate rel-link-header orange-text").html((j + 1) + ". " + topic.item[j].title).attr("title", topic.item[j].title);
       var bdiv = $("<div>").addClass("collapsible-body rel-link-body").html(topic.item[j].topic);
       bdiv.append($("<a>").addClass("right").attr("href", topic.item[j].href).attr("target", "_new").html('<i class="mdi-action-exit-to-app"></i>Link'));
       tmp.append(hdiv).append(bdiv);
@@ -45,7 +45,7 @@ function registerRelLink(li, topic){
 
 var keyword_now;
 function send_noun(vocab){
-  ws.send(JSON.stringify({"vocab": vocab, "keyword": keyword_now}));
+  ws.send(JSON.stringify({"vocab": vocab.substring(vocab.indexOf(" ")), "keyword": keyword_now}));
 }
 
 var loading = $('<div id="loading"><img src="stylesheets/images/support-loading.gif" height="32px" width="32px"></img></div>');
@@ -64,7 +64,7 @@ function process(res){
 	$("#noun").html("");
   if (res.noun != undefined){
   	for (var i = 0; i < res.noun.length; i++){
-  		var li = $("<li>").html(res.noun[i]);
+  		var li = $("<li>").html((i + 1) + ". " + res.noun[i]);
   		li.addClass("z-depth-1 col s3 blue-text noun-tab truncate waves-effect");
   		li.click(function(){
         $(".noun-tab.orange-text").removeClass("orange-text").addClass("blue-text");
@@ -98,7 +98,7 @@ function process(res){
   $("#toc").html("");
   if (res.toc != undefined){
     for (var i = 0; i < res.toc.length; i++){
-      var li = $("<li>").html(res.toc[i].topic);
+      var li = $("<li>").html((i + 1) + ". " + res.toc[i].topic);
       li.addClass("col s12 z-depth-1 toc-tab waves-effect");
       registerRelLink(li, res.toc[i]);
       $("#toc").append(li);
@@ -198,6 +198,15 @@ window.onload = function(){
         hideOverlay();
       }
     });
+  });
+
+  $("#noun-ex-btn").click(function(e){
+    e.preventDefault();
+    var key = $("#noun-ex-key").val();
+    if (key != ""){
+      $("#explanation").html(loading);
+      send_noun(key);
+    }
   });
 
   connectWS();

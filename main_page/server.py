@@ -13,7 +13,7 @@ import random
 
 from retrieval.item_search import search as item_search
 from retrieval.keyword import generate as keyword_generate
-#from retrieval.flow import generate as flow_generate
+from retrieval.flow import generate as flow_generate
 
 I2A = {
 	'keyword': 'algorithm',
@@ -60,6 +60,7 @@ def generate_result(key):
 	except:
 		self.set_status(404)
 		print 'keyword_generate(ids) error.'
+	res['toc'] = json.loads(flow_generate(ids))['toc']
 	return res
 
 class MainHandler(tornado.web.RequestHandler):
