@@ -28,6 +28,7 @@ SEPARATER_r = \
     )
     .
     ,
+    ;
     <
     >
     /
@@ -1454,11 +1455,11 @@ STOP_WORDS_r = \
     z
     zero"""
 
-from nltk.stem.porter import PorterStemmer
+#from nltk.stem.porter import PorterStemmer
 
 # http://stackoverflow.com/questions/26126442/
-STEMMER = PorterStemmer()
-STEM_S_FORBID = set(["analysis", "series"])
+#STEMMER = PorterStemmer()
+STEM_S_FORBID = set(["analysis", "hypothesis", "series"])
 STEM_ES_ENDING = set(["oes", "ses", "xes"])
 PUNCTUATIONS = PUNCTUATIONS_r.split()
 SEPARATER = SEPARATER_r.split()
