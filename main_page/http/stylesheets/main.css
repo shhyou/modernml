@@ -12250,8 +12250,8 @@ button.picker__today:focus, button.picker__clear:focus, button.picker__close:foc
 .noun-tab {
   text-align: center;
   cursor: pointer;
-  height: 24px;
-  line-height: 24px;
+  height: 32px;
+  line-height: 32px;
 }
 
 /* line 49, ../sass/main.scss */
@@ -12282,4 +12282,9 @@ button.picker__today:focus, button.picker__clear:focus, button.picker__close:foc
   width: 32px;
   position: relative;
   margin: 0px auto;
+}
+
+/* line 75, ../sass/main.scss */
+a:hover {
+  color: #81BEF7;
 }

@@ -62,21 +62,26 @@ function process(res){
 	//add noun tab
   res.noun = res.terms;
 	$("#noun").html("");
-	for (var i = 0; i < res.noun.length; i++){
-		var li = $("<li>").html(res.noun[i]);
-		li.addClass("z-depth-1 col s3 blue-text noun-tab truncate waves-effect");
-		li.click(function(){
-			$("#explanation").html(loading);
-			if (ws.readyState != ws.OPEN){
-	      q_vocab = this.innerText;
-	    	connectWS();
-	    }
-	    else
-        send_noun(this.innerText);
-		});
-		li.attr("title", res.noun[i]);
-		$("#noun").append(li);
-	}
+  if (res.noun != undefined){
+  	for (var i = 0; i < res.noun.length; i++){
+  		var li = $("<li>").html(res.noun[i]);
+  		li.addClass("z-depth-1 col s3 blue-text noun-tab truncate waves-effect");
+  		li.click(function(){
+        $(".noun-tab.orange-text").removeClass("orange-text").addClass("blue-text");
+        $(this).removeClass("blue-text");
+        $(this).addClass("orange-text");
+  			$("#explanation").html(loading);
+  			if (ws.readyState != ws.OPEN){
+  	      q_vocab = this.innerText;
+  	    	connectWS();
+  	    }
+  	    else
+          send_noun(this.innerText);
+  		});
+  		li.attr("title", res.noun[i]);
+  		$("#noun").append(li);
+  	}
+  }
 
 	//fixed noun tab
 	/*
@@ -91,11 +96,13 @@ function process(res){
   */
 
   $("#toc").html("");
-  for (var i = 0; i < res.toc.length; i++){
-    var li = $("<li>").html(res.toc[i].topic);
-    li.addClass("col s12 z-depth-1 toc-tab waves-effect");
-    registerRelLink(li, res.toc[i]);
-    $("#toc").append(li);
+  if (res.toc != undefined){
+    for (var i = 0; i < res.toc.length; i++){
+      var li = $("<li>").html(res.toc[i].topic);
+      li.addClass("col s12 z-depth-1 toc-tab waves-effect");
+      registerRelLink(li, res.toc[i]);
+      $("#toc").append(li);
+    }
   }
 }
 
@@ -144,7 +151,6 @@ window.onload = function(){
   	scrollToMain();
   });
 
-  $("#submit").click(function(e){e.preventDefault()});
   $("#good").click(function(e){
   	e.preventDefault();
   	showOverlay();

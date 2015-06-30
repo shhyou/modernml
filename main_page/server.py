@@ -9,10 +9,11 @@ import tornado.websocket
 import urlparse
 import datetime
 import json
+import random
 
 from retrieval.item_search import search as item_search
 from retrieval.keyword import generate as keyword_generate
-from retrieval.flow import generate as flow_generate
+#from retrieval.flow import generate as flow_generate
 
 I2A = {
 	'keyword': 'algorithm',
@@ -44,6 +45,23 @@ I2A = {
 	        ]
 };
 
+random_keywords = ['algorithm', 'graph', 'machine learning', 'information retrieval', 'linear algebra']
+
+def generate_result(key):
+	res = {}
+	res['keyword'] = key
+	try:
+		ids = item_search(key)
+	except:
+		self.set_status(404)
+		print 'item_search(key) error.'
+	try:
+		res['terms'] = keyword_generate(ids, limit=50)
+	except:
+		self.set_status(404)
+		print 'keyword_generate(ids) error.'
+	return res
+
 class MainHandler(tornado.web.RequestHandler):
 	def get(self):
 		self.render('./http/index.html')
@@ -52,27 +70,7 @@ class SubmitHandler(tornado.web.RequestHandler):
 	def get(self):
 		try:
 			key = self.get_argument('q')
-			res = {}
-			res['keywords'] = key
-			try:
-				ids = item_search(key)
-			except:
-				self.set_status(404)
-				print 'item_search(key) error.'
-				return
-			try:
-				res['terms'] = keyword_generate(ids)
-			except:
-				self.set_status(404)
-				print 'keyword_generate(ids) error.'
-				return
-			try:
-				ret['toc'] = flow_generate(ids)
-			except:
-				self.set_status(404)
-				print 'flow_generate(ids) error.'
-				return
-			self.write(json.dumps(res))
+			self.write(json.dumps(generate_result(key)))
 		except:
 			self.set_status(404)
 			self.write('no parameter "q".')
@@ -83,7 +81,13 @@ class NoCacheStaticFileHandler(tornado.web.StaticFileHandler):
 
 class RandomKeywordHandler(tornado.web.RequestHandler):
 	def get(self):
-		self.write(json.dumps(I2A))
+		try:
+			random.shuffle(random_keywords)
+			key = random_keywords[0]
+			self.write(json.dumps(generate_result(key)))
+		except:
+			self.set_status(404)
+			self.write('no parameter "q".')
 
 if __name__ == '__main__':
 	httpsock = tornado.netutil.bind_sockets(9971)

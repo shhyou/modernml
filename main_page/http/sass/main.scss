@@ -6,68 +6,72 @@
 }
 
 .bg {
-	background-image: url('images/bg2-1.png');
-	background-repeat: no-repeat;
-	background-size: cover;
+  background-image: url('images/bg2-1.png');
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
 .bg2 {
-	background-image: url('images/bg3.png');
-	background-repeat: no-repeat;
-	background-size: cover;
+  background-image: url('images/bg3.png');
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
 #main-1 {
-	margin: 0px auto;
-	min-width: 60%;
-	@include border-radius(10px);
+  margin: 0px auto;
+  min-width: 60%;
+  @include border-radius(10px);
 }
 
 #overlay {
-	background-color: rgba(158, 158, 158, 0.6);
-	position: fixed;
-	left: 0px;
-	top: 0px;
-	z-index: 5;
-	display: none;
-	@include opacity(0);
+  background-color: rgba(158, 158, 158, 0.6);
+  position: fixed;
+  left: 0px;
+  top: 0px;
+  z-index: 5;
+  display: none;
+  @include opacity(0);
 
   .progress {
-  	position: relative;
-	  top: 50%;
-	  transform: translateY(-50%);
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
   }
 }
 
 .noun-tab {
   text-align: center;
   cursor: pointer;
-  height: 24px;
-  line-height: 24px;
+  height: 32px;
+  line-height: 32px;
 }
 
 .toc-tab {
-	text-align: center;
-	cursor: pointer;
-	height: 32px;
-	line-height: 32px;
-	font-size: 16px;
+  text-align: center;
+  cursor: pointer;
+  height: 32px;
+  line-height: 32px;
+  font-size: 16px;
 }
 
 .rel-link-header {
-	height: 32px;
-	line-height: 32px;	
-	font-size: 15px;
+  height: 32px;
+  line-height: 32px;  
+  font-size: 15px;
 }
 
 .rel-link-body {
-	font-size: 14px;
-	padding: 8px 14px;
+  font-size: 14px;
+  padding: 8px 14px;
 }
 
 #loading {
-	height: 32px;
-	width: 32px;
-	position: relative;
-	margin: 0px auto;
+  height: 32px;
+  width: 32px;
+  position: relative;
+  margin: 0px auto;
+}
+
+a:hover {
+  color: #81BEF7;
 }
