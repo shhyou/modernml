@@ -9,6 +9,9 @@ for fname in filenames:
     f = open('json/'+fname)
     obj = json.loads(f.next())
     obj['id'] = _id
+    if'herf' in obj:
+        obj['href'] = obj['herf']
+        obj.pop('herf')
     _id += 1
     for i in range(len(obj['toc'])):
         s = obj['toc'][i].replace('\n',' ')
