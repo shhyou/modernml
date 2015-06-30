@@ -28,6 +28,7 @@ SEPARATER_r = \
     )
     .
     ,
+    ;
     <
     >
     /
@@ -1458,7 +1459,7 @@ STOP_WORDS_r = \
 
 # http://stackoverflow.com/questions/26126442/
 #STEMMER = PorterStemmer()
-STEM_S_FORBID = set(["analysis", "series"])
+STEM_S_FORBID = set(["analysis", "hypothesis", "series"])
 STEM_ES_ENDING = set(["oes", "ses", "xes"])
 PUNCTUATIONS = PUNCTUATIONS_r.split()
 SEPARATER = SEPARATER_r.split()
