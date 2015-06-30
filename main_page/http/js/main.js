@@ -29,14 +29,28 @@ function hideOverlay(){
 function registerRelLink(li, topic){
   li.click(function(){
     $("#rel-link").html("");
+    var li_list = {}, counter = {};
+    var cnt = 0;
     for (var j = 0; j < topic.item.length; j++){
-      var tmp = $("<li>");
-      var hdiv = $("<div>").addClass("collapsible-header truncate rel-link-header orange-text").html((j + 1) + ". " + topic.item[j].title).attr("title", topic.item[j].title);
-      var bdiv = $("<div>").addClass("collapsible-body rel-link-body").html(topic.item[j].topic);
-      bdiv.append($("<a>").addClass("right").attr("href", topic.item[j].href).attr("target", "_new").html('<i class="mdi-action-exit-to-app"></i>Link'));
-      tmp.append(hdiv).append(bdiv);
-      $("#rel-link").append(tmp);
+      if (li_list[topic.item[j].href] == undefined){
+        cnt++;
+        li_list[topic.item[j].href] = $("<li>");
+        counter[topic.item[j].href] = 0;
+        $("#rel-link").append(li_list[topic.item[j].href]);
+        var hdiv = $("<div>").addClass("collapsible-header truncate rel-link-header orange-text").html(cnt + ". " + topic.item[j].title).attr("title", topic.item[j].title);
+        var bdiv = $("<div>").addClass("collapsible-body rel-link-body");
+        li_list[topic.item[j].href].append(hdiv).append(bdiv);
+      }      
+
+      counter[topic.item[j].href]++;
+      li_list[topic.item[j].href].children(".collapsible-body").append("(" + counter[topic.item[j].href] + ") " + topic.item[j].topic + "<br>")
+      
     }
+
+    for (var key in li_list){
+      li_list[key].children(".collapsible-body").append($("<a>").addClass("right").attr("href", key).attr("target", "_new").html('<i class="mdi-action-exit-to-app"></i>Link'));
+    }
+
     $('.collapsible').collapsible({
       accordion : false // A setting that changes the collapsible behavior to expandable instead of the default accordion style
     });
@@ -51,6 +65,7 @@ function send_noun(vocab){
 var loading = $('<div id="loading"><img src="stylesheets/images/support-loading.gif" height="32px" width="32px"></img></div>');
 function process(res){
   $("#explanation").html('');
+  $("#rel-link").html("");
 	$(".hide").removeClass("hide");
 	//$("#form").parent().removeClass("m12").addClass("m9");
 	$("#main-1").css("min-width", "85%");
@@ -205,7 +220,7 @@ window.onload = function(){
     var key = $("#noun-ex-key").val();
     if (key != ""){
       $("#explanation").html(loading);
-      send_noun(key);
+      send_noun("1. " + key); //fixed with noun-tag
     }
   });
 
