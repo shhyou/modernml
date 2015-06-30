@@ -1483,5 +1483,5 @@ def simpl_stopwords_split(s):
   for punc in PUNCTUATIONS:
     s = s.replace(punc, "")
   for sep in SEPARATER:
-    s = " ".join(s.split(sep))
+    s = s.replace(sep, " ")
   return [w for w in s.split() if not (w in STOP_WORDS or w.isdigit())]
