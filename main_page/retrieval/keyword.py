@@ -25,10 +25,9 @@ def generate(ids, limit=2147483647):
     if i > 0:
       for c, _, v in vocabcounts:
         vw = v.split()
-        v1 = " ".join(vw[1:])
-        v2 = " ".join(vw[:-1])
-        counts[i-1][v1] -= c
-        counts[i-1][v2] -= c
+        for i in xrange(len(vw)):                  # i = 0...len-1
+          for j in xrange(i):                      # j = 0...i-1
+            counts[i-j][" ".join(vw[j:i+1])] -= c  # string: j..i (inclusive)
   vs.sort()
   vs.reverse()
   return [v for _, _, v in vs][:limit]
