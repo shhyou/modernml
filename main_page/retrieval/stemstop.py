@@ -1,6 +1,6 @@
 # -*- coding: UTF-8 -*-
 
-PUNCTUATIONS = \
+PUNCTUATIONS_r = \
     u""":
     •
     “
@@ -39,7 +39,7 @@ PUNCTUATIONS = \
     *
     's"""
 
-STOP_WORDS = \
+STOP_WORDS_r = \
     u"""0
     1
     2
@@ -1463,3 +1463,30 @@ STOP_WORDS = \
     youve
     z
     zero"""
+
+from nltk.stem.porter import PorterStemmer
+
+# http://stackoverflow.com/questions/26126442/
+STEMMER = PorterStemmer()
+STEM_S_FORBID = set(["analysis", "series"])
+STEM_ES_ENDING = set(["oes", "ses", "xes"])
+PUNCTUATIONS = PUNCTUATIONS_r.split()
+STOP_WORDS = set(STOP_WORDS_r.split())
+
+# naive stemming here
+def stem(w):
+  if w[-3:] in STEM_ES_ENDING:
+    w = w[:-2]
+  elif w[-1] == "s" and w not in STEM_S_FORBID:
+    w = w[:-1]
+  return w
+
+def stems(words):
+  # NTLK return unreadable words..
+  # return [stemmer.stem(w) for w in words]
+  return [stem(w) for w in words]
+
+def simpl_stopwords_split(s):
+  for punc in PUNCTUATIONS:
+    s = s.replace(punc, "")
+  return [w for w in s.split() if not (w in STOP_WORDS or w.isdigit())]

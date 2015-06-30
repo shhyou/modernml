@@ -1,9 +1,5 @@
 import common
-
-from nltk.stem.porter import PorterStemmer
-
-# http://stackoverflow.com/questions/26126442/
-stemmer = PorterStemmer()
+import stemstop
 
 def search(keyword):
   """Search related books/courses from the keyword
@@ -15,8 +11,8 @@ def search(keyword):
   """
 
   # Possibly TODO: normalize keywords (stopwords & stemming & cases)
-  uni_keywords = common.simpl_stopwords_split(keyword.lower())
-  #uni_keywords = [stemmer.stem(w) for w in uni_keywords]
+  uni_keywords = stemstop.simpl_stopwords_split(keyword.lower())
+  #uni_keywords = stemstop.stems(uni_keywords)
   if len(uni_keywords) > 1:
     bi_keywords = [" ".join(ws) for ws in zip(uni_keywords, uni_keywords[1:])]
   else:

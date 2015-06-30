@@ -1,1 +1,0 @@
-../main_page/retrieval/stoplist.py
