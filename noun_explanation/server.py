@@ -67,7 +67,7 @@ def calculate_score(word, keywords):
 	return score
 
 def getExplanationFromWikiThroughGoogle(vocab, keyword):
-	res = requests.get("https://www.google.com.tw/search?q=site:en.wikipedia.org+" + vocab + "&bav=on.2,or.&cad=b&fp=8d02688dbcaec00c&biw=808&bih=667&dpr=1&tch=1&ech=1&psi=1d6QVe-XHs798AW5kqnABg.1435557589508.3")
+	res = requests.get("https://www.google.com.tw/search?q=site:en.wikipedia.org+" + urllib.quote(vocab) + "&bav=on.2,or.&cad=b&fp=8d02688dbcaec00c&biw=808&bih=667&dpr=1&tch=1&ech=1&psi=1d6QVe-XHs798AW5kqnABg.1435557589508.3")
 	content = res.text.split('/*""*/')[1]
 	dic = json.loads(content)
 	link_words = []
