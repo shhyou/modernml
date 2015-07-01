@@ -110,14 +110,11 @@ class flow_agent():
         for r in res:
             toc = {"topic":"; ".join(r[1][0]["vocabs"]), "item":[]}
             for n in r[1]:
-                """
                 item = {}
                 item["title"] = common.DOCUMENT_LIST[n["id"]]["title"]
                 item["href"] = common.DOCUMENT_LIST[n["id"]]["href"]
                 item["topic"] = ", ".join(n["vocabs"])
                 toc["item"].append(item)
-                """
-                pass
             res_json["toc"].append(toc)
         return json.dumps(res_json) 
 
