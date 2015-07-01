@@ -3,8 +3,10 @@ import stemstop
 import math
 import json
 from item_search import search
+
 THRESHOLD = 0.8
 GROUP_SIZE = 5
+
 def create_node(w_list, position, book_id):
     #v_len = math.sqrt(len(w_list))
     vector = {}
@@ -17,8 +19,10 @@ def create_node(w_list, position, book_id):
     for w in vector:
         vector[w] /= v_len
     return (vector, position, w_list, set(vector.keys()), book_id)
+
 def cos(n1, n2 ):
     return sum(n1[0][w]*n2[0][w] for w in n1[3] & n2[3])
+
 class flow_agent():
     def __init__(self):
         self.node_list = []
@@ -26,13 +30,13 @@ class flow_agent():
         self.node_list = []
         self.group = {}
 
-
     def find_p(self,i):
         if self.p[i] == i:
             return i
         else:
             self.p[i] = self.find_p(self.p[i])
             return self.p[i]
+
     def generate(self, ids):
         for _id in ids:
             len_toc = len(common.DOCUMENT_LIST[_id]['toc'])
@@ -77,16 +81,15 @@ class flow_agent():
             res_json["toc"].append(toc)
         #print json.dumps(res_json)
         return json.dumps(res_json) 
-        """Generate
 
-        ids: A list of integers. The IDs of related items.
-        returns: Learning flow. See $TOP/main_page/README.md
-        """
 def generate(ids):
+    """Generate
+
+    ids: A list of integers. The IDs of related items.
+    returns: Learning flow. See $TOP/main_page/README.md
+    """
     fa = flow_agent()
     return fa.generate(ids)
 
 if __name__ == '__main__':
-    fa = flow_agent()
-    print(fa.generate(search(u'machine learning')))
-    #generate([1,2,3]) 
+    print(generate(search(u'machine learning')))
