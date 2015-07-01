@@ -59,7 +59,12 @@ function registerRelLink(li, topic){
 
 var keyword_now;
 function send_noun(vocab){
-  ws.send(JSON.stringify({"vocab": vocab.substring(vocab.indexOf(" ")), "keyword": keyword_now}));
+  if (ws.readyState > 1){
+    q_vocab = vocab;
+    connectWS();
+  }
+  else
+    ws.send(JSON.stringify({"vocab": vocab.substring(vocab.indexOf(" ")), "keyword": keyword_now}));
 }
 
 var loading = $('<div id="loading"><img src="stylesheets/images/support-loading.gif" height="32px" width="32px"></img></div>');
@@ -135,6 +140,7 @@ function connectWS(){
   ws.onmessage = function(response){
     var res = JSON.parse(response.data);
     $("#explanation").html("");
+    $("#explanation").append($("<h5>").append($("<a>").attr("target", "_new").attr("href", "https://en.wikipedia.org/wiki/" + res.title).html(res.title)));
   	$("#explanation").append($("<span>").html(res.content));
     $('#explanation').append("<br><br>");
     var span = $("<span>");

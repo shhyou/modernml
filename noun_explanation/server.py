@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import tornado.ioloop
 import tornado.netutil
 import tornado.process
@@ -12,6 +14,7 @@ import re
 import requests
 import json
 import urllib
+from bs4 import BeautifulSoup
 
 def cutWithFirstDot(string):
 	left = right = 0
@@ -35,28 +38,40 @@ def fixedLink(string):
 
 def getExplanationFromWiki(vocab):
 	vocab = urllib.unquote(vocab)
-	res = requests.get('http://en.wikipedia.org/wiki/' + vocab)
+	res = requests.get('https://en.wikipedia.org/wiki/' + vocab)
 	content = res.text.replace('\n', '').replace('\r', '').replace('\t', '')
-	content = re.sub(r'<table.+?</table>', '', content)
+	title = re.findall('<h1.+?>(.+?)</h1>', content)[0]
+	soup = BeautifulSoup(content)
+	div = soup.find_all("div", "mw-content-ltr")[0]
 	if content.find('Wikipedia does not have an article with this exact name.') != -1:
 		return '<b>Wikipedia</b> does not have an article with this exact name.'
 	else:
-		paragraphs = re.findall('<p>(.+?)</p>', content)
-		title = re.findall('<h1.+?>(.+?)</h1>', content)[0]
-		firstSentence = re.sub(r'<sup .+?>.+?</sup>', '', paragraphs[0])
-		firstSentence = cutWithFirstDot(firstSentence)
-		firstSentence = fixedLink(firstSentence)
+		for child in div.contents:
+			if child.name == 'p':
+				firstParagraph = child
+				break
+		firstSentence = ""
+		for child in firstParagraph.contents:
+			if child.__class__.__name__ == 'Tag':
+				if child.name != 'sup':
+					if child.name == 'a':
+						if child['href'].find('//') == -1 and child['href'].find('http'):
+							child['href'] = 'https://en.wikipedia.org' + child['href']
+						child['target'] = '_new'
+					firstSentence += str(child)
+			else:
+				if str(child).find('.') != -1:
+					firstSentence += str(child)[0 : str(child).find('.') + 1]
+					break
+				else:
+					firstSentence += str(child)
 
-		idx = 0
-		if paragraphs[idx] == '':
-			idx = 1
-
-		if paragraphs[idx].find(' may refer to:') != -1:
+		if str(firstParagraph).find(' may refer to:') != -1:
 			return 'This word may refer to many things. See <a href=\"http://en.wikipedia.org/wiki/' + vocab + '\">' + vocab + '</a>.'
-		elif paragraphs[idx].find('may stand for:') != -1: 
+		elif str(firstParagraph).find('may stand for:') != -1: 
 			return 'This word may stand to many things. See <a href=\"http://en.wikipedia.org/wiki/' + vocab + '\">' + vocab + '</a>.'
 		else:
-			return '<h5><a href="https://en.wikipedia.org/wiki/' + vocab + '" target="_new">' + title + '</a></h5>' + firstSentence
+			return firstSentence
 
 def calculate_score(word, keywords):
 	return 0 #score mode off
@@ -86,6 +101,7 @@ def getExplanationFromWikiThroughGoogle(vocab, keyword):
 			best_idx = i
 
 	result = {}
+	result['title'] = link_words[best_idx]
 	result['content'] = getExplanationFromWiki(link_words[best_idx])
 	result['others'] = []
 	for i in range(len(link_words)):
@@ -95,20 +111,20 @@ def getExplanationFromWikiThroughGoogle(vocab, keyword):
 	return result
 
 class WebSocketHandler(tornado.websocket.WebSocketHandler):
-    def open(self):
-        print 'Client IP:' + self.request.remote_ip + '(opened)'
+	def open(self):
+		print 'Client IP:' + self.request.remote_ip + '(opened)'
 
-    def on_message(self, message):
-    	print message
-    	dic = json.loads(message)
-        self.write_message(getExplanationFromWikiThroughGoogle(dic['vocab'], dic['keyword']))
+	def on_message(self, message):
+		print message
+		dic = json.loads(message)
+		self.write_message(getExplanationFromWikiThroughGoogle(dic['vocab'], dic['keyword']))
 
-    def on_close(self):
-        print 'Client IP:' + self.request.remote_ip + '(closed)'
+	def on_close(self):
+		print 'Client IP:' + self.request.remote_ip + '(closed)'
 
-    def check_origin(self, origin):
-    	parsed_origin = urlparse(origin)
-    	return parsed_origin.netloc.endswith('') # example: .csie.ntu.edu.tw
+	def check_origin(self, origin):
+		parsed_origin = urlparse(origin)
+		return parsed_origin.netloc.endswith('') # example: .csie.ntu.edu.tw
 
 if __name__ == '__main__':
 	httpsock = tornado.netutil.bind_sockets(8357)
