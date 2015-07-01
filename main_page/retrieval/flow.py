@@ -28,7 +28,9 @@ BUZZ_WORDS = [u"introduction", u"homework", u"wrap", u"exercis", u"exercise", \
               u"final", u"exam", u"final exam", u"putting", u"midterm", \
               u"midterm exam", u"appendix", u"reading", u"chapter", \
               u"chapter summary", u"quiz", u"solution", u"solution chapter", \
-              u"extra", u"extra topic", u"topic review", u"review"]
+              u"extra", u"extra topic", u"topic review", u"review", \
+              u"selected", u"selected solution", u"selected reference", \
+              u"note", u"wrapping", u"thing", u"wrapping thing"]
 
 def accum_ngrams(n, words): # compute i-gram for i in xrange(n)
   return [" ".join(ws) for i in xrange(0,n) \
