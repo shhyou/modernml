@@ -3,6 +3,11 @@ function resizeMainContainer(){
 	$("#main .container").css("min-height", window.innerHeight + "px");
   $("#overlay").css("width", window.innerWidth);
   $("#overlay").css("height", window.innerHeight);
+
+  $(".rlk").css('max-height', window.innerHeight);
+  $(".rlk").css("top", "0px");
+  rlk_upperline = $(".rlk").offset().top;
+  moveRelLink();
 }
 
 function scrollToMain(){
@@ -14,6 +19,16 @@ function moveBackground(){
   var pos = -delta * 150 / $("#main")[0].offsetTop;
   if (pos <= 0)
     $(".bg").css("background-position-y", pos + "px");
+}
+
+var rlk_upperline;
+function moveRelLink(){
+  if (rlk_upperline == undefined)
+    $(".rlk").css('top', '0px');
+  else if (parseInt($(window).scrollTop()) > rlk_upperline)
+    $(".rlk").css('top', parseInt($(window).scrollTop() - rlk_upperline) + "px");
+  else
+    $(".rlk").css('top', '0px');
 }
 
 function showOverlay(){
@@ -115,6 +130,9 @@ function process(res){
 	}
   */
 
+  $(".rlk").css("top", "0px");
+  rlk_upperline = $(".rlk").offset().top;
+
   $("#toc").html("");
   if (res.toc != undefined){
     for (var i = 0; i < res.toc.length; i++){
@@ -165,6 +183,8 @@ function connectWS(){
 window.onload = function(){
   window.addEventListener('resize', resizeMainContainer);
   window.addEventListener('scroll', moveBackground);
+  window.addEventListener('scroll', moveRelLink);
+
   resizeMainContainer();
 
   $("#start-button").click(function(e){
