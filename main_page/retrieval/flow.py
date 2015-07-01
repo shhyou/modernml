@@ -22,10 +22,11 @@ def create_node(w_list, position, book_id):
     v_len = math.sqrt(sum(vector[w]**2 for w in vector))
     for w in vector:
         vector[w] /= v_len
-    return (vector, position, w_list, set(vector.keys()), book_id)
+    return dict(vector=vector, keys=set(vector.keys()), rank=position, \
+                vocabs=w_list, id=book_id)
 
 def cos(n1, n2):
-    return sum(n1[0][w]*n2[0][w] for w in n1[3] & n2[3])
+    return sum(n1["vector"][w]*n2["vector"][w] for w in n1["keys"] & n2["keys"])
 
 class flow_agent():
     def __init__(self):
@@ -64,17 +65,17 @@ class flow_agent():
             else:
                 self.group[pa] = [node_list[i]]
 
-        res = [(sum(n[1] for n in self.group[g])/len(self.group[g]),self.group[g]) for g in self.group if len(self.group[g]) > GROUP_SIZE]
+        res = [(sum(n["rank"] for n in self.group[g])/len(self.group[g]),self.group[g]) for g in self.group if len(self.group[g]) > GROUP_SIZE]
         res.sort()
 
         res_json = {"toc":[]}
         for r in res:
-            toc = {"topic":" ".join(r[1][0][2]), "item":[]}
+            toc = {"topic":" ".join(r[1][0]["vocabs"]), "item":[]}
             for n in r[1]:
                 item = {}
-                item["title"] = common.DOCUMENT_LIST[n[4]]["title"]
-                item["href"] = common.DOCUMENT_LIST[n[4]]["href"]
-                item["topic"] = " ".join(n[2])
+                item["title"] = common.DOCUMENT_LIST[n["id"]]["title"]
+                item["href"] = common.DOCUMENT_LIST[n["id"]]["href"]
+                item["topic"] = " ".join(n["vocabs"])
                 toc["item"].append(item)
             res_json["toc"].append(toc)
         return json.dumps(res_json) 
