@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 import tornado.ioloop
 import tornado.netutil
 import tornado.process
@@ -58,17 +56,17 @@ def getExplanationFromWiki(vocab):
 						if child['href'].find('//') == -1 and child['href'].find('http'):
 							child['href'] = 'https://en.wikipedia.org' + child['href']
 						child['target'] = '_new'
-					firstSentence += str(child)
+					firstSentence += unicode(child)
 			else:
-				if str(child).find('.') != -1:
-					firstSentence += str(child)[0 : str(child).find('.') + 1]
+				if unicode(child).find('.') != -1:
+					firstSentence += unicode(child)[0 : unicode(child).find('.') + 1]
 					break
 				else:
-					firstSentence += str(child)
+					firstSentence += unicode(child)
 
-		if str(firstParagraph).find(' may refer to:') != -1:
+		if unicode(firstParagraph).find(' may refer to:') != -1:
 			return 'This word may refer to many things. See <a href=\"http://en.wikipedia.org/wiki/' + vocab + '\">' + vocab + '</a>.'
-		elif str(firstParagraph).find('may stand for:') != -1: 
+		elif unicode(firstParagraph).find('may stand for:') != -1: 
 			return 'This word may stand to many things. See <a href=\"http://en.wikipedia.org/wiki/' + vocab + '\">' + vocab + '</a>.'
 		else:
 			return firstSentence
