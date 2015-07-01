@@ -41,29 +41,41 @@ class flow_agent():
             return self.p[i]
 
     def generate(self, ids):
-        node_list = []
+        node_bucket = {}
+        all_node_num = 0
+        all_node_list = []
         for _id in ids:
             len_toc = len(common.DOCUMENT_LIST[_id]['toc'])
             for i,topic in enumerate(common.DOCUMENT_LIST[_id]['toc']):
                 tmp = stemstop.simpl_stopwords_split(topic.lower())
                 tmp = stemstop.stems(tmp)
-                node_list.append(create_node(tmp, float(i)/len_toc, _id))
-        node_num = len(node_list)
+                node = create_node(tmp, float(i)/len_toc, _id)
+                for w in tmp:
+                    if w in node_bucket:
+                        node_bucket[w].append((all_node_num, node))
+                    else:
+                        node_bucket[w] = [(all_node_num, node)]
+                all_node_list.append(node)
+                all_node_num += 1
 
-        self.p = [i for i in xrange(node_num)]
+        self.p = [i for i in xrange(all_node_num)]
 
-        for i in xrange(node_num):
-            for j in xrange(i+1,node_num):
-                if cos(node_list[i],node_list[j]) > THRESHOLD:
-                    if self.find_p(i) != self.find_p(j):
-                        self.p[self.p[i]] = self.p[j]
+        for node_list in node_bucket.itervalues():
+            node_num = len(node_list)
+            for i in xrange(node_num):
+                for j in xrange(i+1,node_num):
+                    idx1, nod1 = node_list[i]
+                    idx2, nod2 = node_list[j]
+                    if cos(nod1, nod2) > THRESHOLD:
+                        if self.find_p(idx1) != self.find_p(idx2):
+                            self.p[self.p[idx1]] = self.p[idx2]
 
-        for i in xrange(node_num):
+        for i in xrange(all_node_num):
             pa = self.find_p(i)
             if pa in self.group:
-                self.group[pa].append(node_list[i])
+                self.group[pa].append(all_node_list[i])
             else:
-                self.group[pa] = [node_list[i]]
+                self.group[pa] = [all_node_list[i]]
 
         res = [(sum(n["rank"] for n in self.group[g])/len(self.group[g]),self.group[g]) for g in self.group if len(self.group[g]) > GROUP_SIZE]
         res.sort()
