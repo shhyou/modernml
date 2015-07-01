@@ -5,8 +5,6 @@ function resizeMainContainer(){
   $("#overlay").css("height", window.innerHeight);
 
   $(".rlk").css('max-height', window.innerHeight);
-  $(".rlk").css("top", "0px");
-  rlk_upperline = $(".rlk").offset().top;
   moveRelLink();
 }
 
@@ -23,6 +21,8 @@ function moveBackground(){
 
 var rlk_upperline;
 function moveRelLink(){
+  $(".rlk").css("top", "0px");
+    rlk_upperline = $(".rlk").offset().top;
   if (rlk_upperline == undefined)
     $(".rlk").css('top', '0px');
   else if (parseInt($(window).scrollTop()) > rlk_upperline)
@@ -129,9 +129,6 @@ function process(res){
 			$(liList[i + j]).css("height", minH + "px");
 	}
   */
-
-  $(".rlk").css("top", "0px");
-  rlk_upperline = $(".rlk").offset().top;
 
   $("#toc").html("");
   if (res.toc != undefined){
