@@ -6,6 +6,10 @@
 \usepackage{amssymb}
 \usepackage[margin=2cm]{geometry}
 
+% pseudo code
+%\usepackage{algorithmicx}
+\usepackage{algpseudocode}
+
 %% packages & settings for xeCJK
 \usepackage{setspace}
 \usepackage{fontspec}
@@ -73,6 +77,7 @@
 \subsection{名詞搜索}
 % 每個 n-gram 前 limit 個重要 要, n-gram 扣掉 substring, n-gram 由上往下
 % IDF 把不好的 keyword 濾掉
+\input{item_search.py.tex}
 
 \subsection{流程排序}
 % IDF cosine
