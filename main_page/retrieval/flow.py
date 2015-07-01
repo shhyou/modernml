@@ -47,16 +47,17 @@ class flow_agent():
                 tmp = stemstop.simpl_stopwords_split(topic.lower())
                 tmp = stemstop.stems(tmp)
                 node_list.append(create_node(tmp, float(i)/len_toc, _id))
+        node_num = len(node_list)
 
-        self.p = [i for i in xrange(len(node_list))]
+        self.p = [i for i in xrange(node_num)]
 
-        for i in xrange(len(node_list)):
-            for j in xrange(i+1,len(node_list)):
+        for i in xrange(node_num):
+            for j in xrange(i+1,node_num):
                 if cos(node_list[i],node_list[j]) > THRESHOLD:
                     if self.find_p(i) != self.find_p(j):
                         self.p[self.p[i]] = self.p[j]
 
-        for i in xrange(len(node_list)):
+        for i in xrange(node_num):
             pa = self.find_p(i)
             if pa in self.group:
                 self.group[pa].append(node_list[i])
