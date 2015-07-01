@@ -8,8 +8,27 @@ import pprint
 
 pp = pprint.PrettyPrinter(indent=2)
 
-THRESHOLD = 0.8
-GROUP_SIZE = 5
+THRESHOLD = 0.5
+GROUP_SIZE = 4
+GRAM = 2
+
+BUZZ_WORDS = [u"introduction", u"homework", u"wrap", u"exercis", u"exercise", \
+              u"real", u"multi", u"summary", u"context", u"application", \
+              u"overview", u"reference", u"conclusion", u"problem", \
+              u"exploration", u"colophon", u"paper", u"project", \
+              u"homework problem", u"resource", u"short", u"short paper", \
+              u"keynote" , u"talk" , u"keynote talk", u"preface", u"simple", \
+              u"simple application", u"building", u"invited", u"invited talk", \
+              u"background", u"assumption", u"basic", u"foundation", \
+              u"fundamental", u"contribution", u"contributed", \
+              u"contributed paper", u"book", u"transform", u"concept", \
+              u"notation", u"basic concept", u"definition", u"properties", \
+              u"started", u"fine", u"scope", u"statement", u"high", \
+              u"invited paper", u"test", u"bibliography", u"computer"]
+
+def accum_ngrams(n, words): # compute i-gram for i in xrange(n)
+  return [" ".join(ws) for i in xrange(0,n) \
+                       for ws in zip(*(words[j:] for j in xrange(i+1)))]
 
 def create_node(w_list, position, book_id):
     #v_len = math.sqrt(len(w_list))
@@ -49,6 +68,7 @@ class flow_agent():
             for i,topic in enumerate(common.DOCUMENT_LIST[_id]['toc']):
                 tmp = stemstop.simpl_stopwords_split(topic.lower())
                 tmp = stemstop.stems(tmp)
+                tmp = accum_ngrams(GRAM, tmp)
                 node = create_node(tmp, float(i)/len_toc, _id)
                 for w in tmp:
                     if w in node_bucket:
@@ -57,6 +77,10 @@ class flow_agent():
                         node_bucket[w] = [(all_node_num, node)]
                 all_node_list.append(node)
                 all_node_num += 1
+
+        for buzz_word in BUZZ_WORDS:
+            if buzz_word in node_bucket:
+                node_bucket.pop(buzz_word)
 
         self.p = [i for i in xrange(all_node_num)]
 
@@ -82,12 +106,12 @@ class flow_agent():
 
         res_json = {"toc":[]}
         for r in res:
-            toc = {"topic":" ".join(r[1][0]["vocabs"]), "item":[]}
+            toc = {"topic":"; ".join(r[1][0]["vocabs"]), "item":[]}
             for n in r[1]:
                 item = {}
                 item["title"] = common.DOCUMENT_LIST[n["id"]]["title"]
                 item["href"] = common.DOCUMENT_LIST[n["id"]]["href"]
-                item["topic"] = " ".join(n["vocabs"])
+                item["topic"] = ", ".join(n["vocabs"])
                 toc["item"].append(item)
             res_json["toc"].append(toc)
         return json.dumps(res_json) 
