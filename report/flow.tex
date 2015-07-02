@@ -1,6 +1,34 @@
 % IDF cosine
 我們想要幫所有的$s_{i,j}$做clustering和ranking，
 建出合理的學習流程。
+
+令 $W$ 代表整個相關文件 $D'$ 的單字集，包含所有 unigram 及 bigram。
+則 \textproc{GenerateFlow} 演算法如下：
+
+\begin{algorithmic}
+  \Function{GenerateFlow}{$D'$, \textit{limit}}
+    \For{$w\in W$}
+      \State $\mathit{bucket}(w)$ $\gets$ $\{d\,|\,d\in D',\,w\in d'\}$
+    \EndFor
+    \State $G$ $\gets$ Graph with $V:=D'$ and $E=\emptyset$
+    \For{$w\in (W\setminus \text{\textproc{Buzzwords}})$}
+      \For{all\;
+           \begin{minipage}[t]{0.19\textwidth}
+             $d_i,d_j\in \mathit{bucket}(w)$, \\
+             $d(d_i,d_j) < \text{\textproc{Threshold}}$
+           \end{minipage}}
+        \State Connect $d_i$ and $d_j$ in $G$
+      \EndFor
+    \EndFor
+    \State \textit{groups} $\gets$ connected components of $G$
+    \State
+    \State Sort \textit{groups} by $\dfrac{\sum \mathit{Rank}(s_{i,j})}{|\mathit{group}|\times |\{d_i \,|\, \exists s_{i,j} \in group\}|}$
+    \State
+    \State Remove groups of size $|\mathit{group}|\le\text{\textproc{Group Size}}$
+  \EndFunction
+\end{algorithmic}
+
+
 \subsubsection{Clustering with word vector}
 
 可以先定義兩個$s_{i,j}$的距離，

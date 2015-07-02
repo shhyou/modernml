@@ -1,9 +1,9 @@
-令 $W$ 代表整個相關文件 $D'$ 的單字集，包含所有 $unigram$ 至 $4-gram$。則
+令 $W$ 代表整個相關文件 $D'$ 的單字集，包含所有 unigram 至 $4-$gram。則
 \textproc{GenerateKeyword} 函式的演算法如下：
 
 \begin{algorithmic}
   \Function{GenerateKeyword}{$D'$, \textit{limit}}
-    \State \textit{counts} $\gets$ $\forall w\in W,\,\left(w\mapsto|\,\{d\in D':w\in d\}\,|\right)$
+    \State \textit{counts} $\gets$ $\forall w\in W,\,\left(w\mapsto|\,\{d\in D':w\in d\}\,|\,\right)$
     \For{$i=4$ down to $1$}
       \State $W_i$ $\gets$ $W$ 中的 $i-\text{gram}$
       \State Sort $W_i$ by $\mathit{counts}(w)\times {\mathsf{IDF}_w}^2$
