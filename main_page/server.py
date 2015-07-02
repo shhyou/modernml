@@ -101,6 +101,7 @@ if __name__ == '__main__':
 
 	application = tornado.web.Application([
 		(r'/', MainHandler),
+		(r'/(favicon\.ico)', NoCacheStaticFileHandler, {'path': './http/icon/'}),
 		(r'/submit', SubmitHandler),
 		(r'/js/(.+)', NoCacheStaticFileHandler, {'path': './http/js'}),
 		(r'/stylesheets/(.+)', NoCacheStaticFileHandler, {'path': './http/stylesheets'}),
