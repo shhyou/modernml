@@ -1,0 +1,64 @@
+% IDF cosine
+我們想要幫所有的$s_{i,j}$做clustering和ranking，
+建出合理的學習流程。
+\subsubsection{Clustering with word vector}
+
+可以先定義兩個$s_{i,j}$的距離，
+每個$s_{i,j}$都是一個句子，可以拆成很多word，
+然後建構出word vector $v$(像是VSM中的vector)，
+對於每一項$word$，利用$Count(word)*idf(word)$，
+來當作vector該項的數值，最後把vector normalize之後，
+就可以用來計算兩個$s_{i,j}$的相似度。
+
+接著就可以$O(N^{2})$掃過所有個$s_{i,j}$，
+對於兩個$s_{i,j}$的vector $v_1,v_2$，
+如果$\cos(v_1,v_2) > {THRESHOLD}$就將兩個$s_{i,j}$連邊，
+最後我們取大小大於${GROUP\;SIZE}$的connected components，
+來當作我們的cluster完的groups。
+
+\subsubsection{利用bucket加速}
+% bucket 加速 grouping
+因為對於不少關鍵字，
+搜尋出來的$s_{i,j}$數量級約莫在$10^4$左右，
+因此$O(N^{2})$的算法速度會稍嫌慢(尤其我們使用python)，
+我們利用有出現的word先做${bucket}$，
+如果$s_{i,j}$有出現word $w$，那就會被丟到$bucket_w$中，
+建邊的動作只在每個bucket中做，
+如果平均每個bucket有$m$個$s_{i,j}$，
+每個$s_{i,j}$出現在$|s_{i,j}|$個bucket中，
+這樣我們計算的複雜度會變成$O(m^{2}\times \frac{N\times n}{m}) = O(mnN)$，
+統計上會發現平均$|s_{i,j}| = 5$，
+平均$m = 10$，因此大部份時候，算法表現和$O(N)$差不多。
+
+\noindent \paragraph{正確性}
+如果$\cos(v1,v2)$能超過$TRESHOLD$，
+表示兩個vector至少有一個字相同(不然$\cos$會為零)，
+如果兩個$s_{i,j}$有至少一個字重複，
+就至少會屬於某個$bucket$，
+所以他們連邊的計算一定不會少，
+因此加速之後結果依然一樣。
+
+\subsubsection{Group Ranking}
+% ranking 排法
+對於每一個$s_{i,j}$，
+我們可以利用其原本在$i/|d_i|$來當作其在$d_i$中的rank，
+每個group將其擁有的所有$s_{i,j}$的rank做平均當作自己的rank，
+這樣就可以對所有搜尋出來的group做排序。
+
+但會發現有些$s_{i,j}$的字只在某本書大量出現，
+而且章節也很前面，所以會被排序到前面，
+但卻不是重要的內容，
+所以我們將group中有幾個「不同」的$d_i$，也考慮進去，
+最後group的rank我們定義為
+$\frac{Sum(Rank(s_{i,j}))}{len(group)\times |\{d_i | \exists s_{i,j} \in group\}|}$，
+這樣就可以penalize出現過少不同$d_i$的group。
+
+\subsubsection{Buzzword 過濾}
+% buzzwords 的過濾
+Clustering過程中會發現，
+很多$s_{i,j}$會因為一些教科書、課程常出現的buzzwords
+而被連cluster在一起，
+像是Introduction、Chapter、Midterm等等，
+我們可以用bucket解決這個問題，
+透過直接忽略buzzwords的bucket，
+就可以阻止$s_{i,j}$利用buzzword被cluster在一起。
