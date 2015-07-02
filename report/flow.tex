@@ -6,7 +6,7 @@
 則 \textproc{GenerateFlow} 演算法如下：
 
 \begin{algorithmic}
-  \Function{GenerateFlow}{$D'$, \textit{limit}}
+  \Function{GenerateFlow}{$D'$}
     \For{$w\in W$}
       \State $\mathit{bucket}(w)$ $\gets$ $\{d\,|\,d\in D',\,w\in d'\}$
     \EndFor
@@ -31,13 +31,12 @@
 
 \subsubsection{Clustering with word vector}
 
-可以先定義兩個$s_{i,j}$的距離，
-每個$s_{i,j}$都是一個句子，可以拆成很多word（實驗中包含 unigram 及 bigram），
-然後建構出word vector $v$(像是VSM中的vector)，
-對於每一項 word $w$，利用$\mathsf{TF}_w\times\mathsf{IDF}_w$
-來當作vector該項的數值（其中 $\mathsf{TF}_w$ 僅計算 $w$ 出現在 $s_{i,j}$
-中的次數），最後把vector normalize之後，
-就可以用來計算兩個$s_{i,j}$的相似度。
+我們定義兩個$s_{i,j}$的距離如下。
+如同 VSM，每個 $s_{i,j}$ 拆成很多word（實驗中包含 unigram 及 bigram），
+並建立 word-indexed vector $v' = (\mathit{weight}(w))_w$。
+對於每一個 word $w$， $\mathit{weight}(w):=\mathsf{TF}_w\times\mathsf{IDF}_w$
+（其中 $\mathsf{TF}_w$ 僅計算 $w$ 出現在 $s_{i,j}$ 中的次數）。
+最後我們用兩個 normalized-vector $v_i'/||v_i'||$, $v_j'/||v_j'||$ 之間的 cosine distance 來當兩個$s_{i,j}$之間的相似度。
 
 接著就可以$O(N^{2})$掃過所有個$s_{i,j}$，
 對於兩個$s_{i,j}$的vector $v_1,v_2$，
