@@ -4,16 +4,17 @@
 \subsubsection{Clustering with word vector}
 
 可以先定義兩個$s_{i,j}$的距離，
-每個$s_{i,j}$都是一個句子，可以拆成很多word，
+每個$s_{i,j}$都是一個句子，可以拆成很多word（實驗中包含 unigram 及 bigram），
 然後建構出word vector $v$(像是VSM中的vector)，
-對於每一項$word$，利用$Count(word)*idf(word)$，
-來當作vector該項的數值，最後把vector normalize之後，
+對於每一項 word $w$，利用$\mathsf{TF}_w\times\mathsf{IDF}_w$
+來當作vector該項的數值（其中 $\mathsf{TF}_w$ 僅計算 $w$ 出現在 $s_{i,j}$
+中的次數），最後把vector normalize之後，
 就可以用來計算兩個$s_{i,j}$的相似度。
 
 接著就可以$O(N^{2})$掃過所有個$s_{i,j}$，
 對於兩個$s_{i,j}$的vector $v_1,v_2$，
-如果$\cos(v_1,v_2) > {THRESHOLD}$就將兩個$s_{i,j}$連邊，
-最後我們取大小大於${GROUP\;SIZE}$的connected components，
+如果$\cos(v_1,v_2) > \text{\textproc{Threshold}}$就將兩個$s_{i,j}$連邊，
+最後我們取大小大於\textproc{Group Size}的connected components，
 來當作我們的cluster完的groups。
 
 \subsubsection{利用bucket加速}
@@ -21,20 +22,20 @@
 因為對於不少關鍵字，
 搜尋出來的$s_{i,j}$數量級約莫在$10^4$左右，
 因此$O(N^{2})$的算法速度會稍嫌慢(尤其我們使用python)，
-我們利用有出現的word先做${bucket}$，
+我們利用有出現的word先做$\mathit{bucket}$，
 如果$s_{i,j}$有出現word $w$，那就會被丟到$bucket_w$中，
 建邊的動作只在每個bucket中做，
 如果平均每個bucket有$m$個$s_{i,j}$，
 每個$s_{i,j}$出現在$|s_{i,j}|$個bucket中，
-這樣我們計算的複雜度會變成$O(m^{2}\times \frac{N\times n}{m}) = O(mnN)$，
+這樣我們計算的複雜度會變成$O(m^2\times \frac{N\times n}{m}) = O(mnN)$，
 統計上會發現平均$|s_{i,j}| = 5$，
 平均$m = 10$，因此大部份時候，算法表現和$O(N)$差不多。
 
 \noindent \paragraph{正確性}
-如果$\cos(v1,v2)$能超過$TRESHOLD$，
+如果$\cos(v1,v2)$能超過 \textproc{Threshold}，
 表示兩個vector至少有一個字相同(不然$\cos$會為零)，
 如果兩個$s_{i,j}$有至少一個字重複，
-就至少會屬於某個$bucket$，
+就至少會屬於某個$\mathit{bucket}$，
 所以他們連邊的計算一定不會少，
 因此加速之後結果依然一樣。
 
@@ -49,9 +50,10 @@
 而且章節也很前面，所以會被排序到前面，
 但卻不是重要的內容，
 所以我們將group中有幾個「不同」的$d_i$，也考慮進去，
-最後group的rank我們定義為
-$\frac{Sum(Rank(s_{i,j}))}{len(group)\times |\{d_i | \exists s_{i,j} \in group\}|}$，
-這樣就可以penalize出現過少不同$d_i$的group。
+最後group的rank我們定義如下。我們以此penalize出現過少不同$d_i$的group。
+\[ \frac
+    {\sum \mathit{Rank}(s_{i,j})}
+    {|\mathit{group}|\times |\{d_i \,|\, \exists s_{i,j} \in group\}|} \]
 
 \subsubsection{Buzzword 過濾}
 % buzzwords 的過濾

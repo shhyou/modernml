@@ -21,14 +21,17 @@
 \AtBeginDocument{\fontsize{9}{9}\selectfont}
 
 \setlength{\parindent}{12pt}
-\setlength{\parskip}{3pt}
-\linespread{1.5}
+\setlength{\parskip}{2pt}
+\linespread{1.3}
 
 \usepackage{graphicx}
 
 \input{author.tex}
 
+\pagestyle{empty}
+
 \begin{document}
+
 %\date{} % Remove date
 \title{卍煞氣der新世紀高速學習輔助系統卐}
 
@@ -46,6 +49,7 @@
 }
 \date{}
 \maketitle
+\thispagestyle{empty}
 
 \section{簡介}
 摘要內文 第一行  第一行  第一行  第一行  第一行  第一行  第一行  第一行
@@ -68,6 +72,7 @@
 % bucket 加速 grouping
 % ranking 排法
 % buzzwords 的過濾
+\input{flow.tex}
 
 \subsection{使用者介面}
 \input{user_interface.tex}

@@ -3,7 +3,8 @@
 \begin{itemize}
   \item 文件 Corpus $D$。其中一份文件 $d_i\in D$ 代表一本書或是一個開放式課程。
   \item 對每份文件 $d_i\in D$ 是一個序列 $d_i = (s_{i,1},\dots,s_{i,m_i})$，
-        代表書的目錄或是開放式課程的課表。$s_{i,j}$ 是個字串。
+        代表書的目錄或是開放式課程的課表。$s_{i,j}$ 是個字串，為目錄中的
+        一個 section 或課程進度表的一個項目。
   \item \textproc{Search} 函數。給定一串搜尋關鍵字 $k$，\textproc{Search}$(k)$
         是所有包含這些關鍵字的文件的集合。
   \item \textproc{GenerateKeyword} 函數。給定文件子集 $D'\subset D$，
