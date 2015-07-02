@@ -20,9 +20,15 @@
   \EndFunction
 
   在排序過程中，我們透過 \textsf{IDF} 將出現頻率過高又不重要的字排除。在最終的排序中，
-  我們將一個單字是幾個字組成也考慮進去，將叫長的字排到前面。把子字串的出現頻率扣掉
+  我們將一個單字是幾個字組成也考慮進去，將較長的字排到前面。這點體現在最終排序的權重：
+  給定一個 $i$-gram $w$,
+
+  \[ \mathit{weight}(w) := \mathit{counts}(w)\times{\mathsf{IDF}_w}^2\times i \]
+
+  此外，對於一個排序較高的長字串，我們也會將其子字串的頻率扣除長字串的頻率。
   原因如當輸入有 \texttt{content based image retrieval} 等較長的專有名詞時，連帶
-  其子字串出現頻率也被拉高，但本身卻是無意義的字。若其子字串原先就有意義，則在此之外
+  其子字串 \texttt{content based image}、\texttt{based image} 等等出現頻率也被拉高，
+  但本身卻是無意義的字。若其子字串原先就有意義，則在此之外
   必須有其它不屬於 3-gram、4-gram 的出現次數。為了避免出現次數被扣到 0，每次我們扣掉
   出現頻率時，僅取 $W_i$ 前 \textit{limit} 個字串來扣。
 \end{algorithmic}

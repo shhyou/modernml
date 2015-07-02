@@ -52,15 +52,18 @@
 \thispagestyle{empty}
 
 \section{簡介}
-摘要內文 第一行  第一行  第一行  第一行  第一行  第一行  第一行  第一行
- 第一行  第一行  第一行  第一行  第一行  第一行  第一行  第一行  第一行  第一行 
-  第一行  第一行  第一行  第一行  第一行  第一行  第一行  第一行  第一行 
-    第一行   第一行   第一行   第一行   第一行   第一行   第一行   第一行 
-      第一行   第一行   第一行   第一行   第一行   第一行   第一行   第一行 
+學習一個新領域時，搜尋結果往往出現各式各樣的專有名詞。面對如此繁雜的
+名詞，使用者只能慢慢查詢每個名詞的意義，或從許多書中挑一本來讀。然而
+這是相對低效率的學習方式。本系統專書目錄、開放式課程課綱等資料中整理
+出重要關鍵字以及推薦學習順序，以輔助使用者學習時快速進入狀況。
+
 \section{系統設計}
 \input{retrieval_module.tex}
 
 \subsection{資訊擷取}
+我們的資料分別從 Oreilly.com、Apress.com 以及 MIT open course 中擷取下來，
+包含書籍的目錄以及開放式課程的課程大綱。最後蒐集資料有 Apress 5419 筆、
+OReilly 1773 筆、MIT Open Course 1522 筆，共計 8714 筆資料。
 
 \subsection{名詞搜索}
 % 每個 n-gram 前 limit 個重要 要, n-gram 扣掉 substring, n-gram 由上往下
@@ -76,10 +79,6 @@
 
 \subsection{使用者介面}
 \input{user_interface.tex}
-
-\section{實驗結果}
-
-實驗結果搜索的名詞 demo
 
 \section{結論}
 
