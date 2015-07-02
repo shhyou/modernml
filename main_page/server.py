@@ -48,6 +48,8 @@ I2A = {
 random_keywords = ['algorithm', 'graph', 'machine learning', 'information retrieval', 'linear algebra']
 
 def generate_result(key):
+	starttime = datetime.datetime.now()
+
 	res = {}
 	res['keyword'] = key
 	try:
@@ -61,6 +63,9 @@ def generate_result(key):
 		self.set_status(404)
 		print 'keyword_generate(ids) error.'
 	res['toc'] = json.loads(flow_generate(ids))['toc']
+
+	endtime = datetime.datetime.now()
+	res['time'] = (endtime - starttime).total_seconds()
 	return res
 
 class MainHandler(tornado.web.RequestHandler):

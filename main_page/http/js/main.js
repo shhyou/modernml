@@ -25,6 +25,8 @@ function moveRelLink(){
     rlk_upperline = $(".rlk").offset().top;
   if (rlk_upperline == undefined)
     $(".rlk").css('top', '0px');
+  else if (parseInt($(window).scrollTop() - rlk_upperline) + $(".rlk").innerHeight() > $(".toc").innerHeight())
+    $(".rlk").css('top', $(".toc").innerHeight() - $(".rlk").innerHeight()  + "px");
   else if (parseInt($(window).scrollTop()) > rlk_upperline)
     $(".rlk").css('top', parseInt($(window).scrollTop() - rlk_upperline) + "px");
   else
@@ -91,6 +93,7 @@ function process(res){
 	$("#main-1").css("min-width", "85%");
 	$("#key").val(res.keyword);
 	$("#key").focus();
+  $("#time").html("搜尋時間：" + res.time + " 秒")
 
   keyword_now = res.keyword;
 
